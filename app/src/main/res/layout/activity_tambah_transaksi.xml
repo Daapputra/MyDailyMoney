@@ -1,112 +1,215 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/bg_screen">
+    android:background="@color/bg_screen"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="24dp">
 
-        <!-- Spacer -->
-        <View
+        <!-- Header -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="32dp" />
-
-        <!-- Judul -->
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📝 Tambah Catatan Keuangan"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="#2C3E50"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="32dp">
 
-        <!-- CARD PUTIH -->
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_arrow_back"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Kembali"
+                android:padding="8dp"
+                android:layout_centerVertical="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tambah_transaksi"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="22sp"
+                android:textColor="@color/text_primary"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+        <!-- Card Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp"
-            android:background="@drawable/bg_card_white">
+            android:background="@drawable/bg_card_white"
+            android:elevation="4dp"
+            android:padding="24dp">
 
-            <!-- NOMINAL -->
+            <!-- Label Nominal -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nominal"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Input Nominal (Hero) -->
             <EditText
                 android:id="@+id/etNominal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Masukkan nominal (contoh: 50.000)"
-                android:inputType="number"
+                android:background="@null"
+                android:hint="Rp 0"
+                android:inputType="numberDecimal"
+                android:textColor="@color/text_primary"
+                android:textColorHint="#BDC3C7"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-black"
                 android:importantForAutofill="no"
-                android:autofillHints=""
-                android:padding="12dp"
-                android:textSize="16sp" />
+                android:layout_marginBottom="24dp" />
 
-            <!-- JENIS -->
-            <RadioGroup
-                android:id="@+id/rgJenis"
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F0F0F0"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Tanggal Transaksi -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tanggal"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:id="@+id/btnPickDate"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginTop="12dp">
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_input_field"
+                android:padding="16dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginBottom="24dp">
 
-                <RadioButton
-                    android:id="@+id/rbMasuk"
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/green_primary"
+                    android:layout_marginEnd="12dp"/>
+
+                <TextView
+                    android:id="@+id/tvTanggal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⬆️ Pemasukan"
-                    android:textColor="#2C3E50"
-                    android:textSize="14sp"/>
+                    android:text="Hari Ini"
+                    android:textColor="@color/text_primary"
+                    android:textSize="16sp"
+                    android:fontFamily="sans-serif-medium"/>
+            </LinearLayout>
 
+            <!-- Jenis Transaksi -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Jenis Transaksi"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
 
-                <RadioButton
-                    android:id="@+id/rbKeluar"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgJenis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:chipSpacingHorizontal="8dp"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipMasuk"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="⬇️ Pengeluaran"
-                    android:textColor="#2C3E50"
-                    android:textSize="14sp"/>
-            </RadioGroup>
+                    android:text="Pemasukan"/>
 
-            <!-- KATEGORI -->
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipKeluar"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Pengeluaran"/>
+
+            </com.google.android.material.chip.ChipGroup>
+
+            <!-- KATEGORI ICON GRID -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/kategori"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp"/>
+            
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvKategori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"/>
+            
+            <!-- Hidden EditText to store category string for logic compatibility -->
             <EditText
                 android:id="@+id/etKategori"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/kategori"
-                android:inputType="text"
-                android:importantForAutofill="no"
-                android:autofillHints=""
-                android:layout_marginTop="12dp"
-                android:padding="12dp" />
+                android:visibility="gone"
+                android:inputType="text"/>
 
             <!-- CATATAN -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/catatan_opsional"
+                android:textColor="@color/text_secondary"
+                android:textSize="14sp"
+                android:layout_marginBottom="8dp"/>
+
             <EditText
                 android:id="@+id/etCatatan"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/catatan_opsional"
+                android:minHeight="80dp"
+                android:background="@drawable/bg_input_field"
+                android:gravity="top|start"
+                android:hint="Tulis detail transaksi..."
+                android:padding="16dp"
                 android:inputType="textMultiLine"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
                 android:importantForAutofill="no"
-                android:autofillHints=""
-                android:layout_marginTop="8dp"
-                android:padding="12dp"
-                android:textSize="14sp" />
+                android:layout_marginBottom="24dp"/>
 
-            <!-- SIMPAN -->
+            <!-- Tombol Simpan -->
             <Button
                 android:id="@+id/btnSimpan"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Simpan Catatan"
-                android:minHeight="48dp"
-                android:layout_marginTop="20dp"
-                android:backgroundTint="#4CAF50"
-                android:textColor="#FFFFFF" />
+                android:layout_height="56dp"
+                android:text="@string/simpan"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/green_primary"
+                app:cornerRadius="12dp"
+                android:stateListAnimator="@null"
+                android:elevation="0dp"/>
 
         </LinearLayout>
     </LinearLayout>
