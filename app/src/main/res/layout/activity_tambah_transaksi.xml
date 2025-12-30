@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/bg_screen">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Spacer -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="32dp" />
+
+        <!-- Judul -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📝 Tambah Catatan Keuangan"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#2C3E50"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- CARD PUTIH -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@drawable/bg_card_white">
+
+            <!-- NOMINAL -->
+            <EditText
+                android:id="@+id/etNominal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Masukkan nominal (contoh: 50.000)"
+                android:inputType="number"
+                android:importantForAutofill="no"
+                android:autofillHints=""
+                android:padding="12dp"
+                android:textSize="16sp" />
+
+            <!-- JENIS -->
+            <RadioGroup
+                android:id="@+id/rgJenis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="12dp">
+
+                <RadioButton
+                    android:id="@+id/rbMasuk"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⬆️ Pemasukan"
+                    android:textColor="#2C3E50"
+                    android:textSize="14sp"/>
+
+
+                <RadioButton
+                    android:id="@+id/rbKeluar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⬇️ Pengeluaran"
+                    android:textColor="#2C3E50"
+                    android:textSize="14sp"/>
+            </RadioGroup>
+
+            <!-- KATEGORI -->
+            <EditText
+                android:id="@+id/etKategori"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/kategori"
+                android:inputType="text"
+                android:importantForAutofill="no"
+                android:autofillHints=""
+                android:layout_marginTop="12dp"
+                android:padding="12dp" />
+
+            <!-- CATATAN -->
+            <EditText
+                android:id="@+id/etCatatan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/catatan_opsional"
+                android:inputType="textMultiLine"
+                android:importantForAutofill="no"
+                android:autofillHints=""
+                android:layout_marginTop="8dp"
+                android:padding="12dp"
+                android:textSize="14sp" />
+
+            <!-- SIMPAN -->
+            <Button
+                android:id="@+id/btnSimpan"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Simpan Catatan"
+                android:minHeight="48dp"
+                android:layout_marginTop="20dp"
+                android:backgroundTint="#4CAF50"
+                android:textColor="#FFFFFF" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

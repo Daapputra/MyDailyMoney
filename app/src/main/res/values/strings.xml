@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">MyDailyMoney</string>
+    <string name="app_title">My Daily Money</string>
+    <string name="tambah_transaksi">Tambah Transaksi</string>
+    <string name="nominal">Nominal</string>
+    <string name="pemasukan">Pemasukan</string>
+    <string name="pengeluaran">Pengeluaran</string>
+    <string name="kategori">Kategori</string>
+    <string name="catatan_opsional">Catatan (opsional)</string>
+    <string name="simpan">Simpan</string>
+</resources>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Default -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Background -->
+    <color name="bg_screen">#F5F7FA</color>
+    <color name="bg_card_white">#FFFFFF</color>
+
+    <!-- Primary -->
+    <color name="green_primary">#4CAF50</color>
+    <color name="green_soft">#E8F5E9</color>
+
+    <!-- Text -->
+    <color name="text_primary">#2C3E50</color>
+    <color name="text_secondary">#7F8C8D</color>
+
+    <!-- Status -->
+    <color name="red_primary">#C62828</color>
+
+</resources>
