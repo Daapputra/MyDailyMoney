@@ -12,16 +12,19 @@ class OnboardingActivity : AppCompatActivity() {
 
         // Cek apakah user sudah pernah buka aplikasi
         val pref = getSharedPreferences("mydailymoney_pref", Context.MODE_PRIVATE)
-        if (pref.getBoolean("isFirstRun", false)) {
+        // Saya ganti key ke "onboarding_done_v3" agar halaman ini muncul lagi untuk Anda cek
+        if (pref.getBoolean("onboarding_done_v3", false)) {
             startActivity(Intent(this, MainActivity::class.java))
             finish()
             return
         }
-
+        
         setContentView(R.layout.activity_onboarding)
 
         findViewById<Button>(R.id.btnStart).setOnClickListener {
-            pref.edit().putBoolean("isFirstRun", true).apply()
+            // Simpan status bahwa onboarding sudah selesai
+            pref.edit().putBoolean("onboarding_done_v3", true).apply()
+            
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

@@ -1,0 +1,136 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="100"
+    android:viewportHeight="100">
+
+    <!-- Background: Green Squircle -->
+    <path
+        android:fillColor="#2E7D32"
+        android:pathData="M20,5 H80 C92,5 95,8 95,20 V80 C95,92 92,95 80,95 H20 C8,95 5,92 5,80 V20 C5,8 8,5 20,5 Z" />
+
+    <!-- Coin (Behind Body) -->
+    <group>
+        <path
+            android:fillColor="#FFD54F"
+            android:strokeColor="#000000"
+            android:strokeWidth="2.5"
+            android:pathData="M50,12 A13,13 0 1,1 50,38 A13,13 0 1,1 50,12 Z" />
+        <path
+            android:strokeColor="#000000"
+            android:strokeWidth="2.5"
+            android:strokeLineCap="round"
+            android:pathData="M50,16 V34 M47,19 H53 C54.5,19 55,20 55,21.5 C55,23 54.5,24 53,24 H47 C45.5,24 45,25 45,26.5 C45,28 45.5,29 47,29 H53" />
+    </group>
+
+    <!-- Chicken Body -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="
+        M32,42 
+        L65,42 
+        Q80,42 80,55 
+        Q80,60 78,63 
+        Q75,82 50,82 
+        Q25,82 22,63 
+        Q20,60 20,55 
+        L20,55
+        Q20,50 15,45
+        Q20,42 32,42
+        Z" />
+    
+    <!-- Redoing Body Path for better 'Fat' look:
+       Tail on left (3 bumps), Head on right, Round bottom.
+    -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="
+            M30,45 
+            L65,45 
+            C75,45 80,35 85,45 
+            C88,50 85,55 85,60 
+            C85,80 70,85 50,85 
+            C30,85 25,75 25,60
+            
+            L25,58 
+            C20,58 15,55 18,50 
+            C15,48 15,42 20,42
+            C15,38 20,35 25,40
+            L30,45
+            Z" />
+            <!-- This is still experimental. Let's try a shape that matches the reference image structure specifically. -->
+
+    <!-- Final Body Shape -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="
+            M35,42
+            Q50,38 65,42
+            Q75,35 80,45
+            Q85,48 82,55
+            Q80,58 80,60
+            Q80,80 50,80
+            Q28,80 25,60
+            Q25,55 18,52
+            Q15,48 18,45
+            Q15,40 22,38
+            Q28,35 35,42
+            Z" />
+
+    <!-- Comb -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M70,36 C68,30 72,25 75,28 C77,25 80,25 82,28 C84,25 88,28 85,35" />
+
+    <!-- Beak -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M82,48 L90,51 L82,54" />
+    
+    <!-- Wattle -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:pathData="M80,55 Q84,60 80,65 Q76,60 80,55" />
+
+    <!-- Wing Lines -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M38,58 L45,68 M48,58 L55,68 M58,58 L65,68" />
+        
+    <!-- Back Curve -->
+    <path
+        android:strokeColor="#000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:pathData="M40,46 Q52,44 64,46" />
+
+    <!-- Eye -->
+    <path
+        android:fillColor="#000000"
+        android:pathData="M75,48 A2.5,2.5 0 1,1 75,52 A2.5,2.5 0 1,1 75,48 Z" />
+
+</vector>

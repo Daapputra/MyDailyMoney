@@ -4,12 +4,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_layout">
+    android:background="@color/background_layout"
+    android:fitsSystemWindows="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -32,8 +34,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="24dp"
-            android:paddingBottom="16dp"
+            android:paddingHorizontal="16dp"
+            android:paddingVertical="12dp"
             android:gravity="center_vertical"
             android:background="@color/background_layout"
             android:clickable="true"
@@ -56,13 +58,164 @@
                 app:tint="@color/green_primary"/>
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRiwayat"
+        <!-- Header Table Like -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="16dp" />
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/bg_card_white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <!-- Table Headers -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="16dp"
+                    android:paddingHorizontal="16dp"
+                    android:background="@drawable/bg_rounded_top"
+                    android:gravity="center_vertical">
+
+                    <!-- Col 1: NAME -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1.6"
+                        android:text="TRANSAKSI"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-black"
+                        android:textColor="#546E7A"
+                        android:letterSpacing="0.05"
+                        android:textAllCaps="true"/>
+
+                    <!-- Col 2: KATEGORI -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="4dp">
+                        
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_arrow_down"
+                            app:tint="#78909C"
+                            android:layout_marginEnd="4dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="KATEGORI"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="#546E7A"
+                            android:letterSpacing="0.05"
+                            android:textAllCaps="true"/>
+                    </LinearLayout>
+
+                    <!-- Col 3: NOMINAL -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical|end">
+
+                        <ImageView
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:src="@drawable/ic_arrow_down"
+                            app:tint="#78909C"
+                            android:layout_marginEnd="4dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="NOMINAL"
+                            android:textSize="12sp"
+                            android:fontFamily="sans-serif-black"
+                            android:textColor="#546E7A"
+                            android:letterSpacing="0.05"
+                            android:textAllCaps="true"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+                
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRiwayat"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:clipToPadding="false"/>
+
+                <!-- Footer Summary -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#EEEEEE"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="16dp"
+                    android:background="#FAFAFA"
+                    android:gravity="center_vertical">
+                    
+                    <Button
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="▼ Lead More ..."
+                        android:textColor="@color/white"
+                        android:backgroundTint="#42A5F5"
+                        app:cornerRadius="18dp"
+                        android:textSize="12sp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:visibility="gone"/>
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"/>
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total:"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_secondary"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:id="@+id/tvTotalExpenses"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Rp 0"
+                        android:textSize="15sp"
+                        android:fontFamily="sans-serif-bold"
+                        android:textColor="@color/text_primary"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
 
     </LinearLayout>
     
@@ -73,33 +226,23 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:elevation="4dp">
         
         <ImageView
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:src="@drawable/ic_empty_box"
             app:tint="#E0E0E0"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Riwayat Kosong"
-            android:fontFamily="sans-serif-bold"
-            android:textSize="20sp"
-            android:textColor="@color/text_primary"
-            android:layout_marginBottom="8dp"/>
-            
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Semua transaksimu akan tercatat di sini."
-            android:fontFamily="sans-serif"
-            android:textSize="15sp"
-            android:textColor="@color/text_secondary"
-            android:gravity="center"
-            android:paddingHorizontal="32dp"/>
+            android:text="Belum ada transaksi"
+            android:fontFamily="sans-serif-medium"
+            android:textSize="16sp"
+            android:textColor="@color/text_secondary"/>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
