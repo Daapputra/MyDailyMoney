@@ -6,13 +6,19 @@
     android:layout_height="match_parent"
     android:background="@color/background_layout">
 
-    <androidx.core.widget.NestedScrollView
+    <!-- Header Background (Fixed visually behind) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/bg_header_pattern" />
+
+    <!-- Main Vertical Layout -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
-        android:paddingBottom="100dp"
-        android:clipToPadding="false">
+        android:orientation="vertical">
 
+        <!-- FIXED SECTION: Header & Saldo -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,26 +29,43 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:layout_marginTop="32dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp">
                 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/app_title"
-                    android:fontFamily="sans-serif-black"
-                    android:textSize="28sp"
-                    android:textColor="@color/text_primary" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_title"
+                        android:fontFamily="sans-serif-black"
+                        android:textSize="28sp"
+                        android:textColor="@color/white" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kelola keuanganmu dengan mudah"
-                    android:textSize="16sp"
-                    android:fontFamily="sans-serif"
-                    android:textColor="@color/text_secondary"
-                    android:layout_marginTop="4dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Kelola keuanganmu dengan mudah"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:textColor="@color/green_soft"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/btnHeaderHistory"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_history" 
+                    app:tint="#FFFFFF"
+                    android:alpha="0.9"
+                    android:contentDescription="History"/>
             </LinearLayout>
 
             <!-- Saldo Card -->
@@ -52,41 +75,62 @@
                 app:cardCornerRadius="28dp"
                 app:cardElevation="12dp"
                 android:translationZ="4dp"
-                android:layout_marginBottom="24dp">
+                android:layout_marginBottom="16dp"
+                app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@drawable/bg_card_green"
+                    android:background="@drawable/bg_card_gradient_3d"
                     android:padding="24dp">
 
+                    <!-- Top Row: Label and Menu -->
                     <LinearLayout
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:alpha="0.9">
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_wallet_filled"
-                            app:tint="#FFFFFF"
-                            android:layout_marginEnd="8dp"/>
+                        android:gravity="center_vertical">
+                        
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Total Saldo"
-                            android:textColor="#FFFFFF"
+                            android:textColor="#E8F5E9"
                             android:fontFamily="sans-serif-medium"
                             android:textSize="14sp" />
+
+                        <ImageView
+                            android:id="@+id/btnToggleSaldo"
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_visibility"
+                            app:tint="#E8F5E9"
+                            android:layout_marginStart="8dp"
+                            android:alpha="0.8"
+                            android:contentDescription="Toggle Saldo"/>
+                        
+                        <View
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1"/>
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/ic_more_horiz" 
+                            app:tint="#FFFFFF"
+                            android:alpha="0.8"
+                            android:contentDescription="More Options"/>
                     </LinearLayout>
                     
+                    <!-- Balance Amount -->
                     <ViewFlipper
                         android:id="@+id/vfSaldo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:layout_marginBottom="32dp"
                         android:inAnimation="@anim/slide_in_up"
                         android:outAnimation="@anim/slide_out_up">
 
@@ -94,7 +138,7 @@
                             android:id="@+id/tvSaldo1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rp 0"
+                            android:text="Rp 2.548.000"
                             android:textColor="#FFFFFF"
                             android:textSize="36sp"
                             android:fontFamily="sans-serif-black"/>
@@ -103,7 +147,7 @@
                             android:id="@+id/tvSaldo2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Rp 0"
+                            android:text="Rp *****"
                             android:textColor="#FFFFFF"
                             android:textSize="36sp"
                             android:fontFamily="sans-serif-black"/>
@@ -113,138 +157,244 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginTop="24dp">
+                        android:orientation="horizontal">
 
+                        <!-- Income (Left) -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
+                            android:orientation="vertical"
+                            android:gravity="start">
+                            
+                            <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pemasukan"
-                                android:textColor="#E8F5E9"
-                                android:textSize="12sp"
-                                android:alpha="0.8"/>
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="4dp">
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_arrow_down"
+                                    app:tint="#E8F5E9"
+                                    android:layout_marginEnd="4dp"
+                                    android:contentDescription="Income Icon"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/pemasukan"
+                                    android:textColor="#E8F5E9"
+                                    android:textSize="13sp"
+                                    android:alpha="0.9"/>
+                            </LinearLayout>
+
                             <TextView
                                 android:id="@+id/tvMasuk"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Rp 0"
+                                android:text="Rp 1.840.000"
                                 android:textColor="#FFFFFF"
                                 android:fontFamily="sans-serif-bold"
-                                android:textSize="16sp"
-                                android:layout_marginTop="2dp"/>
+                                android:textSize="18sp"/>
                         </LinearLayout>
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="#33FFFFFF"
-                            android:layout_marginHorizontal="16dp"/>
-
+                        <!-- Expense (Right) -->
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:orientation="vertical">
-                            <TextView
+                            android:orientation="vertical"
+                            android:gravity="end">
+                            
+                             <LinearLayout
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pengeluaran"
-                                android:textColor="#FFEBEE"
-                                android:textSize="12sp"
-                                android:alpha="0.8"/>
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginBottom="4dp">
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:src="@drawable/ic_arrow_up"
+                                    app:tint="#FFEBEE"
+                                    android:layout_marginEnd="4dp"
+                                    android:contentDescription="Expense Icon"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/pengeluaran"
+                                    android:textColor="#FFEBEE"
+                                    android:textSize="13sp"
+                                    android:alpha="0.9"/>
+                            </LinearLayout>
+
                             <TextView
                                 android:id="@+id/tvKeluar"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Rp 0"
+                                android:text="Rp 284.000"
                                 android:textColor="#FFFFFF"
                                 android:fontFamily="sans-serif-bold"
-                                android:textSize="16sp"
-                                android:layout_marginTop="2dp"/>
+                                android:textSize="18sp"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
 
-            <!-- Grafik Summary Section (PIE CHART) -->
-            <com.google.android.material.card.MaterialCardView
+        <!-- SCROLLABLE SECTION -->
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fillViewport="true"
+            android:paddingBottom="100dp"
+            android:clipToPadding="false">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardCornerRadius="28dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="@color/bg_card_white"
-                app:strokeWidth="0dp"
-                android:layout_marginBottom="24dp">
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp">
 
-                <LinearLayout
+                <!-- Grafik Summary Section (BAR CHART) -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="8dp"
+                    app:strokeWidth="0dp"
+                    android:layout_marginBottom="24dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ringkasan Pemasukan vs Pengeluaran"
-                        android:fontFamily="sans-serif-bold"
-                        android:textSize="16sp"
-                        android:textColor="@color/text_primary"
-                        android:layout_marginBottom="16dp"/>
-
-                    <!-- PIE CHART -->
-                    <com.github.mikephil.charting.charts.PieChart
-                        android:id="@+id/pieChartSummary"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="250dp" />
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_card_white_3d"
+                        android:padding="20dp">
 
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginBottom="24dp">
+                            
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Overview"
+                                android:fontFamily="sans-serif-bold"
+                                android:textSize="18sp"
+                                android:textColor="@color/text_primary"/>
+                            
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="This Month"
+                                android:textSize="12sp"
+                                android:textColor="@color/text_secondary"
+                                android:background="@drawable/bg_filter_default"
+                                android:paddingHorizontal="12dp"
+                                android:paddingVertical="6dp"/>
+                        </LinearLayout>
 
-            <!-- TABUNGAN SECTION -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Target Tabungan"
-                android:fontFamily="sans-serif-bold"
-                android:textSize="18sp"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="12dp" />
+                        <!-- BAR CHART -->
+                        <com.github.mikephil.charting.charts.BarChart
+                            android:id="@+id/barChartSummary"
+                            android:layout_width="match_parent"
+                            android:layout_height="220dp" />
+                        
+                        <!-- LEGEND CUSTOM -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="8dp"
+                            android:gravity="center">
+                            
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical"
+                                android:layout_marginEnd="16dp">
+                                <View
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/bg_circle_green"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Income"
+                                    android:textSize="12sp"
+                                    android:layout_marginStart="8dp"
+                                    android:textColor="@color/text_secondary"/>
+                            </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvTabungan"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="24dp"/>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal"
+                                android:gravity="center_vertical">
+                                <View
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:background="@drawable/bg_circle_red"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Expense"
+                                    android:textSize="12sp"
+                                    android:layout_marginStart="8dp"
+                                    android:textColor="@color/text_secondary"/>
+                            </LinearLayout>
+                        </LinearLayout>
 
-            <Button
-                android:id="@+id/btnTambahTabungan"
-                style="@style/Widget.Material3.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="+ Tambah Target Baru"
-                android:textColor="@color/green_primary"
-                android:layout_marginBottom="24dp"/>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
 
-            <!-- Help Center Removed from here -->
-            
-            <Button
-                android:id="@+id/btnReset"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Reset Semua Data"
-                android:textColor="#EF5350"
-                android:layout_marginTop="24dp"
-                android:visibility="gone"/>
+                <!-- TABUNGAN SECTION -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Target Tabungan"
+                    android:fontFamily="sans-serif-bold"
+                    android:textSize="18sp"
+                    android:textColor="@color/text_primary"
+                    android:layout_marginBottom="12dp" />
 
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTabungan"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:layout_marginBottom="24dp"/>
+
+                <Button
+                    android:id="@+id/btnTambahTabungan"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="+ Tambah Target Baru"
+                    android:textColor="@color/green_primary"
+                    android:layout_marginBottom="24dp"/>
+                
+                <Button
+                    android:id="@+id/btnReset"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Reset Semua Data"
+                    android:textColor="#EF5350"
+                    android:layout_marginTop="24dp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </LinearLayout>
 
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottomAppBar"
@@ -282,7 +432,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_home"
-                    app:tint="#424242"/>
+                    app:tint="#424242"
+                    android:contentDescription="Home"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -308,7 +459,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_history"
-                    app:tint="#424242"/>
+                    app:tint="#424242"
+                    android:contentDescription="History"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -340,7 +492,8 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_report"
-                    app:tint="#424242"/>
+                    app:tint="#424242"
+                    android:contentDescription="Report"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -351,9 +504,9 @@
                     android:layout_marginTop="2dp"/>
             </LinearLayout>
 
-            <!-- Pengaturan -->
+            <!-- Settings -->
             <LinearLayout
-                android:id="@+id/navPengaturan"
+                android:id="@+id/navSettings"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -366,11 +519,12 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_settings"
-                    app:tint="#424242"/>
+                    app:tint="#424242"
+                    android:contentDescription="Settings"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pengaturan"
+                    android:text="Settings"
                     android:textSize="12sp"
                     android:fontFamily="sans-serif"
                     android:textColor="#424242"
@@ -381,32 +535,16 @@
     </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnTambah"
+        android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        app:tint="#FFFFFF"
+        android:backgroundTint="@color/green_primary"
         app:layout_anchor="@id/bottomAppBar"
-        app:layout_anchorGravity="center"
-        android:translationY="-32dp"
-        app:srcCompat="@drawable/ic_add"
-        app:backgroundTint="@color/green_primary"
-        app:tint="@color/white"
-        app:maxImageSize="36dp"
-        app:elevation="12dp"
-        app:borderWidth="0dp"
+        app:maxImageSize="32dp"
         app:fabCustomSize="64dp"
-        android:contentDescription="Tambah Transaksi"/>
-    
-    <!-- Text Label for FAB -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="11sp"
-        android:fontFamily="sans-serif-medium"
-        android:gravity="center"
-        android:textColor="#212121"
-        app:layout_anchor="@id/bottomAppBar"
-        app:layout_anchorGravity="bottom|center_horizontal"
-        android:layout_marginBottom="12dp"
-        android:elevation="24dp"/>
+        app:elevation="4dp"
+        android:contentDescription="Add Transaction"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

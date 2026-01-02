@@ -4,16 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="16dp"
+    app:cardCornerRadius="20dp"
     app:cardElevation="2dp"
     app:cardBackgroundColor="@color/bg_card_white"
+    app:strokeWidth="0dp"
     android:layout_marginBottom="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,43 +23,55 @@
             android:gravity="center_vertical"
             android:layout_marginBottom="12dp">
 
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/bg_icon_category"
+                app:tint="#E8F5E9"
+                android:padding="8dp"/>
+                
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_wallet_filled"
+                app:tint="@color/green_primary"
+                android:layout_marginStart="-32dp"
+                android:translationY="0dp"/>
+
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="vertical">
-                
+                android:orientation="vertical"
+                android:layout_marginStart="16dp">
+
                 <TextView
                     android:id="@+id/tvNamaTabungan"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Liburan ke Bali"
+                    android:text="Tabungan Liburan"
                     android:fontFamily="sans-serif-bold"
                     android:textSize="16sp"
                     android:textColor="@color/text_primary"/>
-                    
+
                 <TextView
+                    android:id="@+id/tvTarget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Klik untuk lihat detail"
+                    android:text="Target: Rp 5.000.000"
                     android:textSize="12sp"
-                    android:textColor="@color/text_secondary"/>
+                    android:textColor="@color/text_secondary"
+                    android:layout_marginTop="2dp"/>
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tvPersen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="25%"
-                android:fontFamily="sans-serif-medium"
-                android:textColor="@color/green_primary"
-                android:layout_marginEnd="8dp"/>
-                
-            <ImageView
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:src="@drawable/ic_arrow_forward"
-                app:tint="@color/text_secondary"/>
+                android:text="30%"
+                android:fontFamily="sans-serif-bold"
+                android:textSize="14sp"
+                android:textColor="@color/green_primary"/>
         </LinearLayout>
 
         <ProgressBar
@@ -66,36 +79,36 @@
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
             android:layout_width="match_parent"
             android:layout_height="8dp"
-            android:progress="25"
             android:progressDrawable="@drawable/bg_progress_rounded"
-            android:layout_marginBottom="8dp"/>
-
+            android:progress="30"
+            android:max="100"/>
+            
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
+            android:orientation="horizontal"
+            android:layout_marginTop="12dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Terkumpul"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"/>
+                
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1"/>
+                
             <TextView
                 android:id="@+id/tvTerkumpul"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Rp 2.500.000"
+                android:text="Rp 1.500.000"
+                android:fontFamily="sans-serif-bold"
                 android:textSize="14sp"
                 android:textColor="@color/text_primary"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=" / "
-                android:textColor="@color/text_secondary"/>
-
-            <TextView
-                android:id="@+id/tvTarget"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Rp 10.000.000"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"/>
         </LinearLayout>
 
     </LinearLayout>

@@ -1,0 +1,30 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="411dp"
+    android:height="320dp"
+    android:viewportWidth="411"
+    android:viewportHeight="320">
+  
+  <!-- Base Green -->
+  <path
+      android:pathData="M0,0h411v320h-411z"
+      android:fillColor="#2E7D32"/>
+      
+  <!-- Top Right Curve (Lighter) -->
+  <path
+      android:pathData="M411,0 L200,0 Q350,150 411,200 Z"
+      android:fillColor="#338A3D"
+      android:fillAlpha="0.3"/>
+      
+  <!-- Big Circle Overlay Top (Subtle) -->
+  <path
+      android:pathData="M280,-50m-180,0a180,180 0 1,1 360,0a180,180 0 1,1 -360,0"
+      android:fillColor="#FFFFFF"
+      android:fillAlpha="0.05"/>
+      
+  <!-- Bottom Left Curve (Darker) -->
+  <path
+      android:pathData="M0,320 L0,150 Q100,250 200,320 Z"
+      android:fillColor="#1B5E20"
+      android:fillAlpha="0.2"/>
+
+</vector>

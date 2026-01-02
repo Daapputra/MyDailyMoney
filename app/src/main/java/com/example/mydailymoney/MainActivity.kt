@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -20,17 +21,20 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
 import java.util.*
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,12 +44,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvSaldo2: TextView
     private lateinit var tvMasuk: TextView
     private lateinit var tvKeluar: TextView
-    private lateinit var btnTambah: View
+    private lateinit var fabAdd: FloatingActionButton
     private lateinit var btnReset: Button
-    private lateinit var navPengaturan: LinearLayout
+    private lateinit var btnToggleSaldo: ImageView
+    private lateinit var btnHeaderHistory: ImageView
+    private lateinit var navSettings: LinearLayout
     private lateinit var navRiwayat: LinearLayout
     private lateinit var navLaporan: LinearLayout
-    private lateinit var pieChartSummary: PieChart
+    private lateinit var navHome: LinearLayout
+    private lateinit var barChartSummary: BarChart
     
     // ===== TABUNGAN =====
     private lateinit var rvTabungan: RecyclerView
@@ -59,6 +66,8 @@ class MainActivity : AppCompatActivity() {
     private var totalMasuk = 0L
     private var totalKeluar = 0L
     private var lastSaldo = 0L
+    
+    private var isSaldoHidden = false
 
     private val PREF_NAME = "mydailymoney_pref"
 
@@ -76,7 +85,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         initView()
-        setupPieChart()
+        setupBarChart()
         loadData()
         loadTabungan()
         setupTabunganRecycler()
@@ -90,12 +99,15 @@ class MainActivity : AppCompatActivity() {
         tvSaldo2 = findViewById(R.id.tvSaldo2)
         tvMasuk = findViewById(R.id.tvMasuk)
         tvKeluar = findViewById(R.id.tvKeluar)
-        btnTambah = findViewById(R.id.btnTambah)
+        fabAdd = findViewById(R.id.fabAdd)
         btnReset = findViewById(R.id.btnReset)
-        navPengaturan = findViewById(R.id.navPengaturan)
+        btnToggleSaldo = findViewById(R.id.btnToggleSaldo)
+        btnHeaderHistory = findViewById(R.id.btnHeaderHistory)
+        navSettings = findViewById(R.id.navSettings)
         navRiwayat = findViewById(R.id.navRiwayat)
         navLaporan = findViewById(R.id.navLaporan)
-        pieChartSummary = findViewById(R.id.pieChartSummary)
+        navHome = findViewById(R.id.navHome)
+        barChartSummary = findViewById(R.id.barChartSummary)
         
         rvTabungan = findViewById(R.id.rvTabungan)
         btnTambahTabungan = findViewById(R.id.btnTambahTabungan)
@@ -131,12 +143,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupAction() {
-        btnTambah.setOnClickListener {
+        fabAdd.setOnClickListener {
             val intent = Intent(this, TambahTransaksiActivity::class.java)
             tambahTransaksiLauncher.launch(intent)
         }
 
-        navPengaturan.setOnClickListener {
+        navSettings.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
@@ -148,11 +160,42 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, LaporanActivity::class.java))
         }
 
+        navHome.setOnClickListener {
+            // Already on home, maybe refresh or scroll to top
+        }
+
         btnReset.setOnClickListener { showResetDialog() }
         
         btnTambahTabungan.setOnClickListener {
             showAddTabunganDialog()
         }
+
+        btnToggleSaldo.setOnClickListener {
+            toggleSaldoVisibility()
+        }
+
+        btnHeaderHistory.setOnClickListener {
+            startActivity(Intent(this, RiwayatActivity::class.java))
+        }
+    }
+    
+    private fun toggleSaldoVisibility() {
+        isSaldoHidden = !isSaldoHidden
+        
+        // Update icon based on state (assuming we have visibility_off too, using same for now or tint)
+        btnToggleSaldo.alpha = if (isSaldoHidden) 0.5f else 1.0f
+        
+        val saldo = totalMasuk - totalKeluar
+        val displaySaldo = if (isSaldoHidden) "Rp *****" else formatRupiah(saldo)
+        
+        // Update current view text directly or animate if you want
+        // For simplicity, just update the text of current visible view or force re-animation
+        val currentView = vfSaldo.currentView as TextView
+        currentView.text = displaySaldo
+        
+        // Also update tvSaldo1/2 so next animation is correct
+        tvSaldo1.text = displaySaldo
+        tvSaldo2.text = displaySaldo
     }
     
     // ===== FORMATTER HELPER =====
@@ -300,50 +343,114 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun setupPieChart() {
-        pieChartSummary.setUsePercentValues(true)
-        pieChartSummary.description.isEnabled = false
-        pieChartSummary.legend.isEnabled = false
-        pieChartSummary.setExtraOffsets(5f, 10f, 5f, 5f)
-        pieChartSummary.dragDecelerationFrictionCoef = 0.95f
-        pieChartSummary.isDrawHoleEnabled = true
-        pieChartSummary.setHoleColor(Color.WHITE)
-        pieChartSummary.transparentCircleRadius = 61f
-        pieChartSummary.animateY(1000, com.github.mikephil.charting.animation.Easing.EaseInOutQuad)
+    private fun setupBarChart() {
+        barChartSummary.description.isEnabled = false
+        barChartSummary.setDrawGridBackground(false)
+        barChartSummary.setDrawBarShadow(false)
+        barChartSummary.legend.isEnabled = false // Custom legend used in XML
+        
+        // Interaction
+        barChartSummary.setTouchEnabled(true)
+        barChartSummary.isDragEnabled = true
+        barChartSummary.setScaleEnabled(false)
+        barChartSummary.setPinchZoom(false)
+        
+        // Axis styling
+        val xAxis = barChartSummary.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.setDrawGridLines(false)
+        xAxis.textColor = Color.parseColor("#757575")
+        xAxis.textSize = 12f
+        xAxis.granularity = 1f
+        xAxis.setCenterAxisLabels(true) // Center labels for groups
+        
+        val leftAxis = barChartSummary.axisLeft
+        leftAxis.setDrawGridLines(true)
+        leftAxis.gridColor = Color.parseColor("#E0E0E0")
+        leftAxis.gridLineWidth = 0.5f
+        leftAxis.textColor = Color.parseColor("#9E9E9E")
+        leftAxis.textSize = 10f
+        leftAxis.setDrawAxisLine(false)
+        leftAxis.axisMinimum = 0f // Start from 0
+        
+        barChartSummary.axisRight.isEnabled = false
+        
+        barChartSummary.animateY(1000)
     }
 
-    private fun updatePieChart() {
-        if (totalMasuk == 0L && totalKeluar == 0L) {
-            pieChartSummary.clear()
-            pieChartSummary.setNoDataText("Belum ada data")
-            pieChartSummary.setNoDataTextColor(Color.LTGRAY)
-            pieChartSummary.invalidate()
+    private fun updateBarChart() {
+        if (listTransaksi.isEmpty()) {
+            barChartSummary.clear()
+            barChartSummary.invalidate()
             return
         }
 
-        val entries = ArrayList<PieEntry>()
-        // Cek agar tidak error jika 0
-        if (totalMasuk > 0) entries.add(PieEntry(totalMasuk.toFloat(), "Pemasukan"))
-        if (totalKeluar > 0) entries.add(PieEntry(totalKeluar.toFloat(), "Pengeluaran"))
+        // Group data by Date (dd/MM) or Month depending on range. For now, daily/recent.
+        // Let's group by DAY for the last 5-7 days or transactions
+        
+        // Simplified approach: Group by date string "dd MMM"
+        val incomeMap = mutableMapOf<String, Float>()
+        val expenseMap = mutableMapOf<String, Float>()
+        val allDates = sortedSetOf<String>()
+        val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
+        
+        // Sort transactions by time
+        val sortedList = listTransaksi.sortedBy { it.timestamp }
+        
+        // Process data
+        for (t in sortedList) {
+            val dateKey = dateFormat.format(Date(t.timestamp))
+            allDates.add(dateKey)
+            
+            val nominal = t.nominal.toFloat()
+            if (t.jenis.equals("Pemasukan", ignoreCase = true)) {
+                incomeMap[dateKey] = (incomeMap[dateKey] ?: 0f) + nominal
+            } else {
+                expenseMap[dateKey] = (expenseMap[dateKey] ?: 0f) + nominal
+            }
+        }
+        
+        // Take last 5 days/entries to fit chart nicely
+        val recentDates = allDates.toList().takeLast(5)
+        
+        val entriesIncome = ArrayList<BarEntry>()
+        val entriesExpense = ArrayList<BarEntry>()
+        
+        recentDates.forEachIndexed { index, date ->
+            entriesIncome.add(BarEntry(index.toFloat(), incomeMap[date] ?: 0f))
+            entriesExpense.add(BarEntry(index.toFloat(), expenseMap[date] ?: 0f))
+        }
 
-        val dataSet = PieDataSet(entries, "Ringkasan")
-        dataSet.sliceSpace = 3f
-        dataSet.selectionShift = 5f
-        
-        val colors = ArrayList<Int>()
-        if (totalMasuk > 0) colors.add(Color.parseColor("#4CAF50")) // Green
-        if (totalKeluar > 0) colors.add(Color.parseColor("#EF5350")) // Red
-        
-        dataSet.colors = colors
+        // Colors
+        val colorIncome = Color.parseColor("#4CAF50") // Green
+        val colorExpense = Color.parseColor("#EF5350") // Red
 
-        val data = PieData(dataSet)
-        data.setValueFormatter(PercentFormatter())
-        data.setValueTextSize(11f)
-        data.setValueTextColor(Color.WHITE)
+        val set1 = BarDataSet(entriesIncome, "Income")
+        set1.color = colorIncome
+        set1.setDrawValues(false) // Hide values on top of bars
+
+        val set2 = BarDataSet(entriesExpense, "Expense")
+        set2.color = colorExpense
+        set2.setDrawValues(false)
+
+        val groupSpace = 0.4f
+        val barSpace = 0.05f // x2 dataset
+        val barWidth = 0.25f // x2 dataset
+        // (0.25 + 0.05) * 2 + 0.4 = 1.00 -> interval per "group"
+
+        val data = BarData(set1, set2)
+        data.barWidth = barWidth
         
-        pieChartSummary.data = data
-        pieChartSummary.highlightValues(null)
-        pieChartSummary.invalidate()
+        barChartSummary.data = data
+        
+        // Set X-Axis labels
+        barChartSummary.xAxis.valueFormatter = IndexAxisValueFormatter(recentDates)
+        // Restrict view to show groups correctly
+        barChartSummary.xAxis.axisMinimum = 0f
+        barChartSummary.xAxis.axisMaximum = recentDates.size.toFloat()
+        
+        barChartSummary.groupBars(0f, groupSpace, barSpace)
+        barChartSummary.invalidate()
     }
 
     private fun updateUI() {
@@ -356,7 +463,7 @@ class MainActivity : AppCompatActivity() {
         tvKeluar.text = formatRupiah(totalKeluar)
 
         // ===== GRAFIK RINGKASAN =====
-        updatePieChart()
+        updateBarChart()
 
         // ===== RESET BUTTON (INI KUNCI UTAMA) =====
         if (listTransaksi.isNotEmpty()) {
@@ -374,8 +481,10 @@ class MainActivity : AppCompatActivity() {
         val nextView = vfSaldo.currentView as? TextView
         val currentView = if (vfSaldo.currentView == tvSaldo1) tvSaldo2 else tvSaldo1
         
+        val displaySaldo = if (isSaldoHidden) "Rp *****" else formatRupiah(newSaldo)
+        
         // Set saldo baru ke view berikutnya
-        currentView.text = formatRupiah(newSaldo)
+        currentView.text = displaySaldo
         
         // Tentukan animasi berdasarkan perubahan saldo
         if (newSaldo > oldSaldo) {
