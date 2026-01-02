@@ -1,6 +1,7 @@
 package com.example.mydailymoney
 
 data class Transaksi(
+    val id: String = java.util.UUID.randomUUID().toString(),
     val kategori: String,
     val jenis: String,
     val nominal: Long,

@@ -10,25 +10,42 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.MyDailyMoney">
+        android:theme="@style/Theme.MyDailyMoney"
+        tools:targetApi="31">
+        
         <activity
-            android:name=".TransaksiAdapter"
-            android:exported="false" />
-        <activity
-            android:name=".Transaksi"
-            android:exported="false" />
-        <activity
-            android:name=".TambahTransaksiActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name=".OnboardingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+            
+        <activity
+            android:name=".TambahTransaksiActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false"
+            android:label="Pengaturan"/>
+
+        <activity
+            android:name=".RiwayatActivity"
+            android:exported="false"
+            android:label="Riwayat Transaksi"/>
+            
+        <activity
+            android:name=".LaporanActivity"
+            android:exported="false"
+            android:label="Laporan Keuangan"/>
+            
     </application>
 
 </manifest>

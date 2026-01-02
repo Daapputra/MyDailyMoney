@@ -1,84 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp"
-    android:background="#FFFFFF"
-    android:layout_marginBottom="8dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/bg_card_white">
 
-    <!-- ICON + KATEGORI + CATATAN -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:padding="16dp">
 
-        <!-- ICON JENIS -->
-        <ImageView
-            android:id="@+id/imgJenis"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:background="@drawable/bg_circle_green"
-            android:padding="6dp"
-            android:src="@drawable/ic_arrow_up" />
+        <!-- Icon with Background -->
+        <FrameLayout
+            android:id="@+id/layoutIcon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon_category_item">
+            
+            <ImageView
+                android:id="@+id/imgKategori"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_cat_makanan"
+                app:tint="@color/green_primary"/>
+        </FrameLayout>
 
-        <!-- KATEGORI + CATATAN -->
+        <!-- Detail Transaksi -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_marginStart="8dp">
-
-            <!-- KATEGORI -->
+            android:layout_marginStart="16dp">
+            
             <TextView
                 android:id="@+id/tvKategori"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gajian"
-                android:textStyle="bold"
-                android:textColor="#2C3E50"
-                android:textSize="14sp" />
-
-            <!-- CATATAN (OPSIONAL) -->
+                android:text="Makanan"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:textColor="@color/text_primary"/>
+                
             <TextView
                 android:id="@+id/tvCatatan"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="📝 Hasil kerja keras bulan ini"
+                android:text="Catatan singkat di sini"
                 android:textSize="12sp"
-                android:textColor="#6B7280"
-                android:layout_marginTop="2dp"
-                android:alpha="0.85"
-                android:visibility="gone" />
-
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="4dp"
+                android:visibility="gone"/>
         </LinearLayout>
-    </LinearLayout>
 
-    <!-- JENIS + NOMINAL -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="6dp">
-
-        <TextView
-            android:id="@+id/tvJenis"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Pemasukan"
-            android:textColor="#7F8C8D"
-            android:textSize="12sp" />
-
-        <TextView
-            android:id="@+id/tvNominal"
+        <!-- Nominal & Tanggal -->
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="+ Rp1.000.000"
-            android:textStyle="bold"
-            android:textSize="14sp" />
-    </LinearLayout>
+            android:orientation="vertical"
+            android:gravity="end">
+            
+            <TextView
+                android:id="@+id/tvNominal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-Rp 50.000"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-bold"
+                android:textColor="@color/red_primary"/>
+            
+            <TextView
+                android:id="@+id/tvTanggal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10 Jan 2024"
+                android:textSize="12sp"
+                android:textColor="@color/text_secondary"
+                android:layout_marginTop="4dp"/>
+        </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

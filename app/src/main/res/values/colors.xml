@@ -7,15 +7,18 @@
 
     <!-- Background -->
     <color name="bg_screen">#F5F7FA</color>
+    <color name="background_layout">#F0F4F7</color>
     <color name="bg_card_white">#FFFFFF</color>
+    <color name="bg_input_field">#F8F9FA</color>
 
     <!-- Primary -->
-    <color name="green_primary">#4CAF50</color>
+    <color name="green_primary">#2E7D32</color>
+    <color name="green_dark">#1B5E20</color>
     <color name="green_soft">#E8F5E9</color>
 
     <!-- Text -->
-    <color name="text_primary">#2C3E50</color>
-    <color name="text_secondary">#7F8C8D</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
 
     <!-- Status -->
     <color name="red_primary">#C62828</color>

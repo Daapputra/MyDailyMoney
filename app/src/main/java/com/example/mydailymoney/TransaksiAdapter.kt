@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
 
 class TransaksiAdapter(
@@ -16,12 +18,10 @@ class TransaksiAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvKategori: TextView = view.findViewById(R.id.tvKategori)
-        val tvJenis: TextView = view.findViewById(R.id.tvJenis)
-        val tvNominal: TextView = view.findViewById(R.id.tvNominal)
         val tvCatatan: TextView = view.findViewById(R.id.tvCatatan)
-
-        // 🔑 TAMBAHAN ICON
-        val imgJenis: ImageView = view.findViewById(R.id.imgJenis)
+        val tvTanggal: TextView = view.findViewById(R.id.tvTanggal)
+        val tvNominal: TextView = view.findViewById(R.id.tvNominal)
+        val imgKategori: ImageView = view.findViewById(R.id.imgKategori)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -34,37 +34,45 @@ class TransaksiAdapter(
         val data = list[position]
         val ctx = holder.itemView.context
 
+        // Kategori is non-nullable, so direct assignment is safe.
         holder.tvKategori.text = data.kategori
-        holder.tvJenis.text = data.jenis
 
-        // ===== NOMINAL + WARNA =====
-        if (data.jenis == "Pemasukan") {
-            holder.tvNominal.text = "+ ${formatRupiah(data.nominal)}"
-            holder.tvNominal.setTextColor(
-                ContextCompat.getColor(ctx, android.R.color.holo_green_dark)
-            )
-
-            // ICON PEMASUKAN
-            holder.imgJenis.setImageResource(R.drawable.ic_arrow_up)
-            holder.imgJenis.setBackgroundResource(R.drawable.bg_circle_green)
-
-        } else {
-            holder.tvNominal.text = "- ${formatRupiah(data.nominal)}"
-            holder.tvNominal.setTextColor(
-                ContextCompat.getColor(ctx, android.R.color.holo_red_dark)
-            )
-
-            // ICON PENGELUARAN
-            holder.imgJenis.setImageResource(R.drawable.ic_arrow_down)
-            holder.imgJenis.setBackgroundResource(R.drawable.bg_circle_red)
-        }
-
-        // ===== CATATAN (JIKA ADA) =====
-        if (!data.catatan.isNullOrBlank()) {
+        // Correctly and safely handle nullable Catatan.
+        if (!data.catatan.isNullOrEmpty()) {
             holder.tvCatatan.visibility = View.VISIBLE
-            holder.tvCatatan.text = "📝 ${data.catatan}"
+            holder.tvCatatan.text = data.catatan
         } else {
             holder.tvCatatan.visibility = View.GONE
+        }
+        
+        // Format Tanggal
+        val sdf = SimpleDateFormat("dd MMM yyyy", Locale("in", "ID"))
+        holder.tvTanggal.text = sdf.format(Date(data.timestamp))
+
+        // Nominal & Warna
+        if (data.jenis == "Pemasukan") {
+            holder.tvNominal.text = "+ ${formatRupiah(data.nominal)}"
+            holder.tvNominal.setTextColor(ContextCompat.getColor(ctx, R.color.green_primary))
+        } else {
+            holder.tvNominal.text = "- ${formatRupiah(data.nominal)}"
+            holder.tvNominal.setTextColor(ContextCompat.getColor(ctx, R.color.red_primary))
+        }
+        
+        // Icon mapping (kategori is non-nullable).
+        holder.imgKategori.setImageResource(getIconForCategory(data.kategori))
+    }
+
+    // This function correctly expects a non-nullable String, as defined in Transaksi.kt.
+    private fun getIconForCategory(kategori: String): Int {
+        return when (kategori.lowercase(Locale.getDefault())) {
+            "makanan" -> R.drawable.ic_cat_makanan
+            "transportasi" -> R.drawable.ic_cat_transportasi
+            "belanja" -> R.drawable.ic_cat_belanja
+            "tagihan" -> R.drawable.ic_cat_tagihan
+            "hiburan" -> R.drawable.ic_cat_hiburan
+            "kesehatan" -> R.drawable.ic_cat_kesehatan
+            "pendidikan" -> R.drawable.ic_cat_pendidikan
+            else -> R.drawable.ic_cat_lainnya
         }
     }
 
