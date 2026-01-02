@@ -92,6 +92,10 @@ class LaporanActivity : AppCompatActivity() {
         rvTopIncomeCategories = findViewById(R.id.rvTopIncomeCategories)
         rvTopExpenseCategories = findViewById(R.id.rvTopExpenseCategories)
 
+        // Set initial text for filters
+        tvFilterWaktu.text = "$mainFilterWaktuText ▾"
+        tvAnalysisPeriod.text = "$analysisFilterWaktuText ▾"
+
         // Set separate click listeners for each filter
         tvFilterWaktu.setOnClickListener { showMainFilterDialog() }
         tvAnalysisPeriod.setOnClickListener { showAnalysisFilterDialog() }
@@ -473,19 +477,20 @@ class LaporanActivity : AppCompatActivity() {
 
     private fun getIconForCategory(category: String): Int {
         return when (category.lowercase(Locale.ROOT)) {
-            "gaji" -> R.drawable.ic_cat_gaji
-            "bonus" -> R.drawable.ic_cat_bonus
-            "dagang" -> R.drawable.ic_cat_dagang
-            "freelance" -> R.drawable.ic_cat_freelance
-            "komisi" -> R.drawable.ic_cat_komisi
-            "usaha" -> R.drawable.ic_cat_usaha
             "makanan" -> R.drawable.ic_cat_makanan
-            "belanja" -> R.drawable.ic_cat_belanja
             "transportasi" -> R.drawable.ic_cat_transportasi
+            "belanja" -> R.drawable.ic_cat_belanja
             "tagihan" -> R.drawable.ic_cat_tagihan
             "hiburan" -> R.drawable.ic_cat_hiburan
             "kesehatan" -> R.drawable.ic_cat_kesehatan
             "pendidikan" -> R.drawable.ic_cat_pendidikan
+            "gaji" -> R.drawable.ic_cat_gaji
+            "kerja" -> R.drawable.ic_cat_freelance
+            "usaha" -> R.drawable.ic_cat_usaha
+            "dagang" -> R.drawable.ic_cat_dagang
+            "komisi" -> R.drawable.ic_cat_komisi
+            "bonus" -> R.drawable.ic_cat_bonus
+            "investasi" -> R.drawable.ic_money
             else -> R.drawable.ic_cat_lainnya
         }
     }
