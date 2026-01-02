@@ -1,43 +1,59 @@
 package com.example.mydailymoney
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.Bundle
-import android.widget.Button
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import com.github.mikephil.charting.charts.LineChart
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.text.SimpleDateFormat
+import java.text.NumberFormat
 import java.util.*
 
 class LaporanActivity : AppCompatActivity() {
 
+    // Views
     private lateinit var pieChart: PieChart
-    private lateinit var lineChart: LineChart
+    private lateinit var pieChartIncome: PieChart
+    private lateinit var pieChartExpense: PieChart
     private lateinit var tvFilterWaktu: TextView
-    private lateinit var tvChartTitle: TextView
-    private lateinit var btnSwitchPengeluaran: Button
-    private lateinit var btnSwitchPemasukan: Button
-    
+    private lateinit var tvTotalBalance: TextView
+    private lateinit var tvLegendIncome: TextView
+    private lateinit var tvLegendExpense: TextView
+    private lateinit var btnToggleExpense: MaterialButton
+    private lateinit var btnToggleIncome: MaterialButton
+    private lateinit var tvAnalysisTitle: TextView
+    private lateinit var tvAnalysisPeriod: TextView
+    private lateinit var layoutExpenseList: LinearLayout
+    private lateinit var layoutIncomeList: LinearLayout
+    private lateinit var rvTopIncomeCategories: RecyclerView
+    private lateinit var rvTopExpenseCategories: RecyclerView
+
+    // Data & State
     private val listTransaksi = mutableListOf<Transaksi>()
-    private var filterWaktu = "BULAN"
-    private var filterJenis = "Pengeluaran" // Default show expense
-    
+    private var mainFilterWaktu = "BULAN"
+    private var mainFilterWaktuText = "Bulan Ini"
+    private var analysisFilterWaktu = "BULAN"
+    private var analysisFilterWaktuText = "Bulan Ini"
+    private var isExpenseView = true
     private val PREF_NAME = "mydailymoney_pref"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,55 +68,76 @@ class LaporanActivity : AppCompatActivity() {
         initView()
         setupCharts()
         loadData()
-        updateCharts()
+
+        // Update each section with its own filter
+        updateMainBalanceCard()
+        updateAnalysisCard()
+        updateToggleView()
     }
 
     private fun initView() {
         pieChart = findViewById(R.id.pieChart)
-        lineChart = findViewById(R.id.lineChart)
+        pieChartIncome = findViewById(R.id.pieChartIncome)
+        pieChartExpense = findViewById(R.id.pieChartExpense)
         tvFilterWaktu = findViewById(R.id.tvFilterWaktu)
-        tvChartTitle = findViewById(R.id.tvChartTitle)
-        btnSwitchPengeluaran = findViewById(R.id.btnSwitchPengeluaran)
-        btnSwitchPemasukan = findViewById(R.id.btnSwitchPemasukan)
+        tvTotalBalance = findViewById(R.id.tvTotalBalance)
+        tvLegendIncome = findViewById(R.id.tvLegendIncome)
+        tvLegendExpense = findViewById(R.id.tvLegendExpense)
+        btnToggleExpense = findViewById(R.id.btnToggleExpense)
+        btnToggleIncome = findViewById(R.id.btnToggleIncome)
+        tvAnalysisTitle = findViewById(R.id.tvAnalysisTitle)
+        tvAnalysisPeriod = findViewById(R.id.tvAnalysisPeriod)
+        layoutExpenseList = findViewById(R.id.layoutExpenseList)
+        layoutIncomeList = findViewById(R.id.layoutIncomeList)
+        rvTopIncomeCategories = findViewById(R.id.rvTopIncomeCategories)
+        rvTopExpenseCategories = findViewById(R.id.rvTopExpenseCategories)
 
-        tvFilterWaktu.setOnClickListener { showFilterWaktuDialog() }
-        
-        btnSwitchPengeluaran.setOnClickListener {
-            if (filterJenis != "Pengeluaran") {
-                filterJenis = "Pengeluaran"
-                updateSwitchButtons()
-                updateCharts()
+        // Set separate click listeners for each filter
+        tvFilterWaktu.setOnClickListener { showMainFilterDialog() }
+        tvAnalysisPeriod.setOnClickListener { showAnalysisFilterDialog() }
+
+        btnToggleExpense.setOnClickListener {
+            if (!isExpenseView) {
+                isExpenseView = true
+                updateToggleView()
             }
         }
-        
-        btnSwitchPemasukan.setOnClickListener {
-            if (filterJenis != "Pemasukan") {
-                filterJenis = "Pemasukan"
-                updateSwitchButtons()
-                updateCharts()
+        btnToggleIncome.setOnClickListener {
+            if (isExpenseView) {
+                isExpenseView = false
+                updateToggleView()
             }
         }
-        
-        updateSwitchButtons()
+
+        rvTopIncomeCategories.layoutManager = LinearLayoutManager(this)
+        rvTopExpenseCategories.layoutManager = LinearLayoutManager(this)
     }
-    
-    private fun updateSwitchButtons() {
-        if (filterJenis == "Pengeluaran") {
-            btnSwitchPengeluaran.backgroundTintList = ContextCompat.getColorStateList(this, R.color.green_primary)
-            btnSwitchPengeluaran.setTextColor(Color.WHITE)
-            
-            btnSwitchPemasukan.backgroundTintList = ContextCompat.getColorStateList(this, R.color.bg_card_white)
-            btnSwitchPemasukan.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
-            
-            tvChartTitle.text = "Analisis Pengeluaran"
+
+    private fun updateToggleView() {
+        if (isExpenseView) {
+            // Expense Active
+            btnToggleExpense.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#C62828")) // Red
+            btnToggleExpense.setTextColor(Color.WHITE)
+            btnToggleIncome.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E0E0E0")) // Grey
+            btnToggleIncome.setTextColor(Color.parseColor("#757575"))
+
+            pieChartExpense.visibility = View.VISIBLE
+            pieChartIncome.visibility = View.GONE
+            tvAnalysisTitle.text = "Analisis Pengeluaran"
+            layoutExpenseList.visibility = View.VISIBLE
+            layoutIncomeList.visibility = View.GONE
         } else {
-            btnSwitchPemasukan.backgroundTintList = ContextCompat.getColorStateList(this, R.color.green_primary)
-            btnSwitchPemasukan.setTextColor(Color.WHITE)
-            
-            btnSwitchPengeluaran.backgroundTintList = ContextCompat.getColorStateList(this, R.color.bg_card_white)
-            btnSwitchPengeluaran.setTextColor(ContextCompat.getColor(this, R.color.text_secondary))
-            
-            tvChartTitle.text = "Analisis Pemasukan"
+            // Income Active
+            btnToggleExpense.backgroundTintList = ColorStateList.valueOf(Color.parseColor("#E0E0E0")) // Grey
+            btnToggleExpense.setTextColor(Color.parseColor("#757575"))
+            btnToggleIncome.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.green_primary))
+            btnToggleIncome.setTextColor(Color.WHITE)
+
+            pieChartExpense.visibility = View.GONE
+            pieChartIncome.visibility = View.VISIBLE
+            tvAnalysisTitle.text = "Analisis Pemasukan"
+            layoutExpenseList.visibility = View.GONE
+            layoutIncomeList.visibility = View.VISIBLE
         }
     }
 
@@ -114,171 +151,342 @@ class LaporanActivity : AppCompatActivity() {
     }
 
     private fun setupCharts() {
-        // Pie Chart Setup
-        pieChart.setUsePercentValues(true)
-        pieChart.description.isEnabled = false
-        pieChart.legend.isEnabled = false
-        pieChart.setExtraOffsets(5f, 10f, 5f, 5f)
-        pieChart.dragDecelerationFrictionCoef = 0.95f
-        pieChart.isDrawHoleEnabled = true
-        pieChart.setHoleColor(Color.WHITE)
-        pieChart.transparentCircleRadius = 61f
-        pieChart.animateY(1000, com.github.mikephil.charting.animation.Easing.EaseInOutQuad)
-
-        // Line Chart Setup
-        lineChart.description.isEnabled = false
-        lineChart.legend.isEnabled = true
-        lineChart.setTouchEnabled(true)
-        lineChart.setPinchZoom(true)
-        lineChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        lineChart.xAxis.setDrawGridLines(false)
-        lineChart.axisLeft.setDrawGridLines(true)
-        lineChart.axisRight.isEnabled = false
-        lineChart.animateX(1000)
-    }
-    
-    private fun updateCharts() {
-        updatePieChart()
-        updateLineChart()
+        configureMainPieChart(pieChart)
+        configureCategoryPieChart(pieChartIncome)
+        configureCategoryPieChart(pieChartExpense)
     }
 
-    private fun updatePieChart() {
-        val filteredList = getFilteredData()
-        
-        if (filteredList.isEmpty()) {
-            pieChart.clear()
-            pieChart.setNoDataText("Belum ada data $filterJenis untuk periode ini")
-            pieChart.setNoDataTextColor(Color.GRAY)
-            pieChart.invalidate()
-            return
+    // Function to update ONLY the main balance card (top section)
+    private fun updateMainBalanceCard() {
+        val filteredList = getFilteredDataForMain()
+        var totalIncome = 0L
+        var totalExpense = 0L
+        filteredList.forEach {
+            if (it.jenis.equals("Pemasukan", ignoreCase = true)) totalIncome += it.nominal
+            else totalExpense += it.nominal
         }
-
-        val categoryMap = filteredList.groupBy { it.kategori }
-            .mapValues { entry -> entry.value.sumOf { it.nominal } }
-
-        val entries = ArrayList<PieEntry>()
-        categoryMap.forEach { (key, value) ->
-            entries.add(PieEntry(value.toFloat(), key))
-        }
-
-        val dataSet = PieDataSet(entries, filterJenis)
-        dataSet.sliceSpace = 3f
-        dataSet.selectionShift = 5f
-        
-        val colors = if (filterJenis == "Pengeluaran") getExpenseColors() else getIncomeColors()
-        dataSet.colors = colors
-
-        val data = PieData(dataSet)
-        data.setValueFormatter(PercentFormatter())
-        data.setValueTextSize(11f)
-        data.setValueTextColor(Color.WHITE)
-        
-        pieChart.data = data
-        pieChart.highlightValues(null)
-        pieChart.invalidate()
+        val totalBalance = totalIncome - totalExpense
+        tvTotalBalance.text = formatRupiahSimple(totalBalance)
+        tvLegendIncome.text = formatRupiahSimple(totalIncome)
+        tvLegendExpense.text = formatRupiahSimple(totalExpense)
+        updateMainPieChart(totalIncome, totalExpense)
     }
-    
-    private fun updateLineChart() {
-        val filteredList = getFilteredData()
 
-        if (filteredList.isEmpty()) {
-            lineChart.clear()
-            lineChart.setNoDataText("Belum ada data $filterJenis untuk periode ini")
-            lineChart.invalidate()
-            return
-        }
-
-        // Group by date (day of month for "BULAN", or day of week for "MINGGU")
-        val dateFormat = SimpleDateFormat("dd", Locale.getDefault())
-        val groupedByDate = filteredList.groupBy {
-            val calendar = Calendar.getInstance()
-            calendar.timeInMillis = it.timestamp
-            calendar.get(Calendar.DAY_OF_MONTH) // Example: group by day of month
-        }.mapValues { entry ->
-            entry.value.sumOf { it.nominal }.toFloat()
-        }
-
-        val entries = ArrayList<Entry>()
-        val labels = ArrayList<String>()
-        
-        // Sort by day to have a correct timeline
-        val sortedKeys = groupedByDate.keys.sorted()
-        sortedKeys.forEachIndexed { index, day ->
-            entries.add(Entry(index.toFloat(), groupedByDate[day]!!))
-            labels.add(day.toString())
-        }
-
-        val dataSet = LineDataSet(entries, filterJenis)
-        dataSet.color = ContextCompat.getColor(this, if(filterJenis == "Pengeluaran") R.color.red_primary else R.color.green_primary)
-        dataSet.setCircleColor(dataSet.color)
-        dataSet.circleRadius = 4f
-        dataSet.lineWidth = 2.5f
-        dataSet.valueTextSize = 10f
-
-        lineChart.xAxis.valueFormatter = IndexAxisValueFormatter(labels)
-        lineChart.data = LineData(dataSet)
-        lineChart.invalidate()
+    // Function to update ONLY the analysis card (bottom section)
+    private fun updateAnalysisCard() {
+        val filteredList = getFilteredDataForAnalysis()
+        updateCategoryCharts(filteredList)
+        updateTopCategories(filteredList)
     }
-    
-    private fun getFilteredData(): List<Transaksi> {
-        val filteredByTime = when (filterWaktu) {
+
+    private fun getFilteredDataForMain(): List<Transaksi> {
+        return when (mainFilterWaktu) {
             "HARI" -> listTransaksi.filter { isToday(it.timestamp) }
             "MINGGU" -> listTransaksi.filter { isThisWeek(it.timestamp) }
             else -> listTransaksi.filter { isThisMonth(it.timestamp) }
         }
-        return filteredByTime.filter { it.jenis == filterJenis }
     }
 
-    private fun showFilterWaktuDialog() {
-        val items = arrayOf("Hari Ini", "Minggu Ini", "Bulan Ini")
-        AlertDialog.Builder(this)
-            .setTitle("Filter Waktu")
-            .setItems(items) { _, which ->
-                filterWaktu = when (which) {
-                    0 -> "HARI"
-                    1 -> "MINGGU"
+    private fun getFilteredDataForAnalysis(): List<Transaksi> {
+        return when (analysisFilterWaktu) {
+            "HARI" -> listTransaksi.filter { isToday(it.timestamp) }
+            "MINGGU" -> listTransaksi.filter { isThisWeek(it.timestamp) }
+            else -> listTransaksi.filter { isThisMonth(it.timestamp) }
+        }
+    }
+
+    // Dialog for Main Filter (Top Card)
+    private fun showMainFilterDialog() {
+        showFilterDialog(mainFilterWaktu) { newFilter, newFilterText ->
+            mainFilterWaktu = newFilter
+            mainFilterWaktuText = newFilterText
+            tvFilterWaktu.text = "$mainFilterWaktuText ▾"
+            updateMainBalanceCard() // Update only main card
+        }
+    }
+
+    // Dialog for Analysis Filter (Bottom Card)
+    private fun showAnalysisFilterDialog() {
+        showFilterDialog(analysisFilterWaktu) { newFilter, newFilterText ->
+            analysisFilterWaktu = newFilter
+            analysisFilterWaktuText = newFilterText
+            tvAnalysisPeriod.text = "$analysisFilterWaktuText ▾"
+            updateAnalysisCard() // Update only analysis card
+        }
+    }
+
+    // Generic Dialog Function
+    private fun showFilterDialog(currentFilter: String, onFilterSelected: (String, String) -> Unit) {
+        val view = layoutInflater.inflate(R.layout.dialog_filter_waktu, null)
+        val radioGroup = view.findViewById<android.widget.RadioGroup>(R.id.radioGroup)
+        val btnBatal = view.findViewById<View>(R.id.btnBatal)
+        val btnTerapkan = view.findViewById<View>(R.id.btnTerapkan)
+
+        when (currentFilter) {
+            "HARI" -> radioGroup.check(R.id.rbHari)
+            "MINGGU" -> radioGroup.check(R.id.rbMinggu)
+            else -> radioGroup.check(R.id.rbBulan)
+        }
+
+        val dialog = MaterialAlertDialogBuilder(this).setView(view).create()
+        dialog.window?.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
+
+        btnBatal.setOnClickListener { dialog.dismiss() }
+        btnTerapkan.setOnClickListener {
+            val selectedId = radioGroup.checkedRadioButtonId
+            if (selectedId != -1) {
+                val newFilter = when (selectedId) {
+                    R.id.rbHari -> "HARI"
+                    R.id.rbMinggu -> "MINGGU"
                     else -> "BULAN"
                 }
-                tvFilterWaktu.text = "${items[which]} ▾"
-                updateCharts()
+                val newFilterText = when (newFilter) {
+                    "HARI" -> "Hari Ini"
+                    "MINGGU" -> "Minggu Ini"
+                    else -> "Bulan Ini"
+                }
+                onFilterSelected(newFilter, newFilterText)
             }
-            .show()
+            dialog.dismiss()
+        }
     }
-    
-    // Color helpers for Pie Chart
-    private fun getExpenseColors(): List<Int> {
-        return listOf(
-            Color.parseColor("#E57373"), Color.parseColor("#F06292"), Color.parseColor("#BA68C8"),
-            Color.parseColor("#9575CD"), Color.parseColor("#7986CB"), Color.parseColor("#FF8A65")
-        )
+
+    private fun updateMainPieChart(totalIncome: Long, totalExpense: Long) {
+        val entries = ArrayList<PieEntry>()
+        if (totalIncome > 0) entries.add(PieEntry(totalIncome.toFloat(), formatRupiahSimple(totalIncome)))
+        if (totalExpense > 0) entries.add(PieEntry(totalExpense.toFloat(), formatRupiahSimple(totalExpense)))
+
+        if (entries.isEmpty()) {
+            pieChart.clear()
+            pieChart.invalidate()
+            return
+        }
+
+        val dataSet = PieDataSet(entries, "").apply {
+            sliceSpace = 2f
+            selectionShift = 5f
+            colors = listOf(ContextCompat.getColor(this@LaporanActivity, R.color.green_primary), ContextCompat.getColor(this@LaporanActivity, R.color.red_primary))
+            setDrawValues(false)
+        }
+
+        pieChart.data = PieData(dataSet)
+        pieChart.invalidate()
     }
-    
-    private fun getIncomeColors(): List<Int> {
+
+    private fun updateCategoryCharts(filteredList: List<Transaksi>) {
+        val incomeByCategory = filteredList.filter { it.jenis.equals("Pemasukan", true) }
+            .groupBy { it.kategori }
+            .mapValues { it.value.sumOf { tx -> tx.nominal } }
+
+        val incomeEntries = incomeByCategory.map { PieEntry(it.value.toFloat(), it.key) }
+
+        if (incomeEntries.isNotEmpty()) {
+            val incomeDataSet = createCategoryDataSet(incomeEntries, getVariedColors())
+            pieChartIncome.data = PieData(incomeDataSet).apply { setValueFormatter(PercentFormatter(pieChartIncome)) }
+        } else {
+            pieChartIncome.clear()
+        }
+        pieChartIncome.invalidate()
+
+
+        val expenseByCategory = filteredList.filter { !it.jenis.equals("Pemasukan", true) }
+            .groupBy { it.kategori }
+            .mapValues { it.value.sumOf { tx -> tx.nominal } }
+
+        val expenseEntries = expenseByCategory.map { PieEntry(it.value.toFloat(), it.key) }
+
+        if (expenseEntries.isNotEmpty()) {
+            val expenseDataSet = createCategoryDataSet(expenseEntries, getVariedColors())
+            pieChartExpense.data = PieData(expenseDataSet).apply { setValueFormatter(PercentFormatter(pieChartExpense)) }
+        } else {
+            pieChartExpense.clear()
+        }
+        pieChartExpense.invalidate()
+    }
+
+    private fun updateTopCategories(filteredList: List<Transaksi>) {
+        val incomeList = filteredList.filter { it.jenis.equals("Pemasukan", true) }
+        val totalIncomeVal = incomeList.sumOf { it.nominal }.coerceAtLeast(1)
+
+        val topIncome = incomeList
+            .groupBy { it.kategori }
+            .map { (category, transactions) ->
+                val total = transactions.sumOf { it.nominal }
+                CategorySummary(category, "Pemasukan", total, (total.toFloat() / totalIncomeVal) * 100)
+            }
+            .sortedByDescending { it.total }
+            .take(6)
+
+        val expenseList = filteredList.filter { !it.jenis.equals("Pemasukan", true) }
+        val totalExpenseVal = expenseList.sumOf { it.nominal }.coerceAtLeast(1)
+
+        val topExpense = expenseList
+            .groupBy { it.kategori }
+            .map { (category, transactions) ->
+                val total = transactions.sumOf { it.nominal }
+                CategorySummary(category, "Pengeluaran", total, (total.toFloat() / totalExpenseVal) * 100)
+            }
+            .sortedByDescending { it.total }
+            .take(6)
+
+        rvTopIncomeCategories.adapter = TopCategoryAdapter(topIncome)
+        rvTopExpenseCategories.adapter = TopCategoryAdapter(topExpense)
+    }
+
+    private fun configureMainPieChart(chart: PieChart) {
+        chart.apply {
+            setUsePercentValues(false)
+            description.isEnabled = false
+            legend.isEnabled = false
+            setExtraOffsets(5f, 5f, 5f, 5f)
+            dragDecelerationFrictionCoef = 0.95f
+            isDrawHoleEnabled = false
+            setDrawEntryLabels(true)
+            setEntryLabelColor(Color.WHITE)
+            setEntryLabelTextSize(12f)
+            setEntryLabelTypeface(Typeface.DEFAULT_BOLD)
+            animateY(1000)
+        }
+    }
+
+    private fun configureCategoryPieChart(chart: PieChart) {
+        chart.apply {
+            setUsePercentValues(true)
+            description.isEnabled = false
+            legend.isEnabled = false
+            isDrawHoleEnabled = true
+            holeRadius = 58f
+            transparentCircleRadius = 61f
+            setHoleColor(Color.TRANSPARENT)
+            setDrawCenterText(true)
+            setCenterTextTypeface(Typeface.DEFAULT_BOLD)
+            setDrawEntryLabels(true)
+            setEntryLabelTextSize(11f)
+            setEntryLabelColor(Color.BLACK)
+            setCenterTextColor(Color.BLACK)
+            animateY(1200)
+        }
+    }
+
+    private fun createCategoryDataSet(entries: List<PieEntry>, colors: List<Int>): PieDataSet {
+        return PieDataSet(entries, "").apply {
+            this.colors = colors
+            valueTextSize = 12f
+            valueTypeface = Typeface.DEFAULT_BOLD
+            valueLinePart1Length = 0.5f
+            valueLinePart2Length = 0.1f
+            valueLineColor = Color.GRAY
+            xValuePosition = PieDataSet.ValuePosition.OUTSIDE_SLICE
+            yValuePosition = PieDataSet.ValuePosition.INSIDE_SLICE
+            valueTextColor = Color.WHITE
+        }
+    }
+
+    private fun formatRupiahSimple(v: Long): String {
+        val format = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
+        return "Rp\u00A0" + format.format(v).replace("Rp", "").trim().replace(",00", "")
+    }
+
+    private fun getVariedColors(): List<Int> {
         return listOf(
-            Color.parseColor("#81C784"), Color.parseColor("#4DB6AC"), Color.parseColor("#4DD0E1"),
-            Color.parseColor("#64B5F6"), Color.parseColor("#AED581"), Color.parseColor("#FFF176")
+            Color.parseColor("#FBC02D"), // Yellow 700
+            Color.parseColor("#4CAF50"), // Green
+            Color.parseColor("#03A9F4"), // Light Blue
+            Color.parseColor("#FF9800"), // Orange
+            Color.parseColor("#9C27B0"), // Purple
+            Color.parseColor("#00BCD4"), // Cyan
+            Color.parseColor("#F44336"), // Red
+            Color.parseColor("#E91E63"), // Pink
+            Color.parseColor("#CDDC39"), // Lime
+            Color.parseColor("#FFC107"), // Amber
+            Color.parseColor("#673AB7"), // Deep Purple
+            Color.parseColor("#3F51B5"), // Indigo
+            Color.parseColor("#2196F3"), // Blue
+            Color.parseColor("#009688"), // Teal
+            Color.parseColor("#795548"), // Brown
+            Color.parseColor("#9E9E9E"), // Grey
+            Color.parseColor("#607D8B")  // Blue Grey
         )
     }
 
-    // Date helpers
     private fun isToday(time: Long): Boolean {
         val now = Calendar.getInstance()
         val t = Calendar.getInstance().apply { timeInMillis = time }
-        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) &&
-                now.get(Calendar.DAY_OF_YEAR) == t.get(Calendar.DAY_OF_YEAR)
+        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) && now.get(Calendar.DAY_OF_YEAR) == t.get(Calendar.DAY_OF_YEAR)
     }
 
     private fun isThisWeek(time: Long): Boolean {
         val now = Calendar.getInstance()
         val t = Calendar.getInstance().apply { timeInMillis = time }
-        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) &&
-                now.get(Calendar.WEEK_OF_YEAR) == t.get(Calendar.WEEK_OF_YEAR)
+        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) && now.get(Calendar.WEEK_OF_YEAR) == t.get(Calendar.WEEK_OF_YEAR)
     }
 
     private fun isThisMonth(time: Long): Boolean {
         val now = Calendar.getInstance()
         val t = Calendar.getInstance().apply { timeInMillis = time }
-        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) &&
-                now.get(Calendar.MONTH) == t.get(Calendar.MONTH)
+        return now.get(Calendar.YEAR) == t.get(Calendar.YEAR) && now.get(Calendar.MONTH) == t.get(Calendar.MONTH)
+    }
+
+    data class CategorySummary(val name: String, val type: String, val total: Long, val percentage: Float)
+
+    inner class TopCategoryAdapter(private val items: List<CategorySummary>) : RecyclerView.Adapter<TopCategoryAdapter.ViewHolder>() {
+
+        inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+            val card: MaterialCardView = view.findViewById(R.id.cardCategory)
+            val ivIcon: ImageView = view.findViewById(R.id.ivCategoryIcon)
+            val tvName: TextView = view.findViewById(R.id.tvCategoryName)
+            val tvAmount: TextView = view.findViewById(R.id.tvCategoryAmount)
+            val tvPercentage: TextView = view.findViewById(R.id.tvCategoryPercentage)
+        }
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val view = android.view.LayoutInflater.from(parent.context).inflate(R.layout.item_top_category, parent, false)
+            return ViewHolder(view)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = items[position]
+            holder.tvName.text = item.name
+            holder.tvAmount.text = formatRupiahSimple(item.total)
+            holder.tvPercentage.text = String.format("%.1f%%", item.percentage)
+            holder.ivIcon.setImageResource(getIconForCategory(item.name))
+
+            holder.card.setCardBackgroundColor(Color.WHITE)
+            holder.tvName.setTextColor(Color.parseColor("#212121"))
+
+            if (item.type.equals("Pemasukan", true)) {
+                holder.tvAmount.setTextColor(Color.parseColor("#2E7D32"))
+                holder.tvPercentage.setTextColor(Color.parseColor("#757575"))
+                holder.card.strokeColor = Color.WHITE
+                holder.ivIcon.setColorFilter(Color.parseColor("#4CAF50"))
+            } else {
+                holder.tvAmount.setTextColor(Color.parseColor("#C62828"))
+                holder.tvPercentage.setTextColor(Color.parseColor("#757575"))
+                holder.card.strokeColor = Color.WHITE
+                holder.ivIcon.setColorFilter(Color.parseColor("#EF5350"))
+            }
+        }
+
+        override fun getItemCount() = items.size
+    }
+
+    private fun getIconForCategory(category: String): Int {
+        return when (category.lowercase(Locale.ROOT)) {
+            "gaji" -> R.drawable.ic_cat_gaji
+            "bonus" -> R.drawable.ic_cat_bonus
+            "dagang" -> R.drawable.ic_cat_dagang
+            "freelance" -> R.drawable.ic_cat_freelance
+            "komisi" -> R.drawable.ic_cat_komisi
+            "usaha" -> R.drawable.ic_cat_usaha
+            "makanan" -> R.drawable.ic_cat_makanan
+            "belanja" -> R.drawable.ic_cat_belanja
+            "transportasi" -> R.drawable.ic_cat_transportasi
+            "tagihan" -> R.drawable.ic_cat_tagihan
+            "hiburan" -> R.drawable.ic_cat_hiburan
+            "kesehatan" -> R.drawable.ic_cat_kesehatan
+            "pendidikan" -> R.drawable.ic_cat_pendidikan
+            else -> R.drawable.ic_cat_lainnya
+        }
     }
 }
