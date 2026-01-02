@@ -76,9 +76,6 @@ class TambahTransaksiActivity : AppCompatActivity() {
     private fun setupAction() {
         btnBack.setOnClickListener { onBackPressed() }
         btnSimpan.setOnClickListener { simpanTransaksi() }
-        
-        // Set default choice
-        chipKeluar.isChecked = true
     }
 
     private fun setupNominalFormatter() {
@@ -170,6 +167,11 @@ class TambahTransaksiActivity : AppCompatActivity() {
 
         if (nominalStr.isEmpty()) {
             etNominal.error = "Isi nominal"
+            return
+        }
+
+        if (cgJenis.checkedChipId == View.NO_ID) {
+            Toast.makeText(this, "Pilih jenis transaksi terlebih dahulu", Toast.LENGTH_SHORT).show()
             return
         }
         
