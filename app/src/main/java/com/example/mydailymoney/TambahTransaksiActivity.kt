@@ -1,8 +1,11 @@
 package com.example.mydailymoney
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -13,13 +16,13 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.chip.Chip
-import com.google.android.material.chip.ChipGroup
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.text.NumberFormat
@@ -32,9 +35,9 @@ class TambahTransaksiActivity : AppCompatActivity() {
     private lateinit var etNominal: EditText
     private lateinit var etKategori: EditText // Hidden but necessary for logic
     private lateinit var etCatatan: EditText
-    private lateinit var cgJenis: ChipGroup
-    private lateinit var chipMasuk: Chip
-    private lateinit var chipKeluar: Chip
+    private lateinit var rgJenis: RadioGroup
+    private lateinit var rbMasuk: RadioButton
+    private lateinit var rbKeluar: RadioButton
     private lateinit var btnSimpan: Button
     private lateinit var rvKategori: RecyclerView
     private lateinit var btnBack: ImageButton
@@ -63,9 +66,9 @@ class TambahTransaksiActivity : AppCompatActivity() {
         etNominal = findViewById(R.id.etNominal)
         etKategori = findViewById(R.id.etKategori)
         etCatatan = findViewById(R.id.etCatatan)
-        cgJenis = findViewById(R.id.cgJenis)
-        chipMasuk = findViewById(R.id.chipMasuk)
-        chipKeluar = findViewById(R.id.chipKeluar)
+        rgJenis = findViewById(R.id.rgJenis)
+        rbMasuk = findViewById(R.id.rbMasuk)
+        rbKeluar = findViewById(R.id.rbKeluar)
         btnSimpan = findViewById(R.id.btnSimpan)
         rvKategori = findViewById(R.id.rvKategori)
         btnBack = findViewById(R.id.btnBack)
@@ -76,6 +79,45 @@ class TambahTransaksiActivity : AppCompatActivity() {
     private fun setupAction() {
         btnBack.setOnClickListener { onBackPressed() }
         btnSimpan.setOnClickListener { simpanTransaksi() }
+
+        // Animasi saat memilih jenis transaksi
+        rgJenis.setOnCheckedChangeListener { _, checkedId ->
+            val selectedBtn = findViewById<View>(checkedId)
+            selectedBtn?.let { view ->
+                view.animate()
+                    .scaleX(0.9f)
+                    .scaleY(0.9f)
+                    .setDuration(100)
+                    .withEndAction {
+                        view.animate()
+                            .scaleX(1.05f)
+                            .scaleY(1.05f)
+                            .setDuration(100)
+                            .withEndAction {
+                                view.animate()
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(100)
+                                    .start()
+                            }
+                            .start()
+                    }
+                    .start()
+            }
+            // Update kategori berdasarkan jenis transaksi
+            updateKategoriList(checkedId)
+        }
+    }
+
+    private fun updateKategoriList(checkedId: Int) {
+        val newList = if (checkedId == R.id.rbMasuk) {
+            getPemasukanKategoriList()
+        } else {
+            getPengeluaranKategoriList()
+        }
+        kategoriAdapter.updateData(newList)
+        selectedKategori = null
+        etKategori.setText("")
     }
 
     private fun setupNominalFormatter() {
@@ -103,7 +145,7 @@ class TambahTransaksiActivity : AppCompatActivity() {
         })
     }
 
-    private fun getKategoriList(): List<Kategori> {
+    private fun getPengeluaranKategoriList(): List<Kategori> {
         return listOf(
             Kategori("Makanan", R.drawable.ic_cat_makanan),
             Kategori("Transportasi", R.drawable.ic_cat_transportasi),
@@ -116,9 +158,25 @@ class TambahTransaksiActivity : AppCompatActivity() {
         )
     }
 
+    private fun getPemasukanKategoriList(): List<Kategori> {
+        return listOf(
+            Kategori("Gaji", R.drawable.ic_cat_gaji),
+            Kategori("Kerja", R.drawable.ic_cat_freelance),
+            Kategori("Usaha", R.drawable.ic_cat_usaha),
+            Kategori("Dagang", R.drawable.ic_cat_dagang),
+            Kategori("Komisi", R.drawable.ic_cat_komisi), // Added
+            Kategori("Bonus", R.drawable.ic_cat_bonus),
+            Kategori("Investasi", R.drawable.ic_money),
+            Kategori("Lainnya", R.drawable.ic_cat_lainnya)
+        )
+    }
+
     private fun setupCategoryGrid() {
-        val categories = getKategoriList()
-        kategoriAdapter = KategoriAdapter(categories) { kategori ->
+        // Default kosong atau bisa di set ke Pemasukan/Pengeluaran jika ada default selection
+        // Saat ini default kosong karena RadioGroup belum terpilih secara default di XML atau code
+        val initialList = listOf<Kategori>() 
+        
+        kategoriAdapter = KategoriAdapter(initialList) { kategori ->
             selectedKategori = kategori
             etKategori.setText(kategori.nama) // Keep this for validation logic
             kategoriAdapter.setSelected(kategori)
@@ -170,7 +228,7 @@ class TambahTransaksiActivity : AppCompatActivity() {
             return
         }
 
-        if (cgJenis.checkedChipId == View.NO_ID) {
+        if (rgJenis.checkedRadioButtonId == -1) {
             Toast.makeText(this, "Pilih jenis transaksi terlebih dahulu", Toast.LENGTH_SHORT).show()
             return
         }
@@ -181,8 +239,8 @@ class TambahTransaksiActivity : AppCompatActivity() {
         }
 
         val nominal = nominalStr.toLongOrNull() ?: 0
-        val jenis = when (cgJenis.checkedChipId) {
-            R.id.chipMasuk -> "Pemasukan"
+        val jenis = when (rgJenis.checkedRadioButtonId) {
+            R.id.rbMasuk -> "Pemasukan"
             else -> "Pengeluaran"
         }
         
@@ -197,8 +255,27 @@ class TambahTransaksiActivity : AppCompatActivity() {
 
         saveToPref(transaksi)
         
-        setResult(Activity.RESULT_OK)
-        finish()
+        // Show Success Dialog
+        showSuccessDialog()
+    }
+
+    private fun showSuccessDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_success, null)
+        
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+            
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
+
+        // Auto dismiss after 1.5 seconds and finish activity
+        Handler(Looper.getMainLooper()).postDelayed({
+            dialog.dismiss()
+            setResult(Activity.RESULT_OK)
+            finish()
+        }, 1500)
     }
 
     private fun saveToPref(transaksi: Transaksi) {
@@ -229,19 +306,27 @@ class TambahTransaksiActivity : AppCompatActivity() {
 data class Kategori(val nama: String, val iconRes: Int)
 
 class KategoriAdapter(
-    private val items: List<Kategori>,
+    private var items: List<Kategori>,
     private val onItemClick: (Kategori) -> Unit
 ) : RecyclerView.Adapter<KategoriAdapter.ViewHolder>() {
 
     private var selectedItem: Kategori? = null
 
+    fun updateData(newItems: List<Kategori>) {
+        items = newItems
+        selectedItem = null // Reset selection when category changes
+        notifyDataSetChanged()
+    }
+
     fun setSelected(kategori: Kategori) {
         val oldSelected = selectedItem
         selectedItem = kategori
         
-        // Notify change for old and new selected items
-        oldSelected?.let { notifyItemChanged(items.indexOf(it)) }
-        notifyItemChanged(items.indexOf(kategori))
+        val oldIndex = items.indexOf(oldSelected)
+        val newIndex = items.indexOf(kategori)
+
+        if (oldIndex != -1) notifyItemChanged(oldIndex)
+        if (newIndex != -1) notifyItemChanged(newIndex)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -260,11 +345,22 @@ class KategoriAdapter(
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val ivKategori: ImageView = itemView.findViewById(R.id.ivKategori)
         private val tvKategori: TextView = itemView.findViewById(R.id.tvKategori)
+        private val container: View = ivKategori.parent as View
 
         fun bind(item: Kategori, isSelected: Boolean) {
             ivKategori.setImageResource(item.iconRes)
             tvKategori.text = item.nama
-            itemView.isSelected = isSelected
+            
+            // Set selected state for selector drawable
+            container.isSelected = isSelected
+            tvKategori.isSelected = isSelected
+            
+            // Optional: Simple animation
+            if (isSelected) {
+                itemView.animate().scaleX(1.1f).scaleY(1.1f).setDuration(150).start()
+            } else {
+                itemView.animate().scaleX(1f).scaleY(1f).setDuration(150).start()
+            }
         }
     }
 }

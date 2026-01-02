@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_dialog_success"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp">
+
+    <ImageView
+        android:id="@+id/ivIcon"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginBottom="24dp"
+        android:src="@drawable/ic_fab_chicken" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="sans-serif-bold"
+        android:gravity="center"
+        android:text="Berhasil Disimpan!"
+        android:textColor="@color/green_primary"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center"
+        android:text="Transaksi baru telah ditambahkan ke riwayat Anda."
+        android:textColor="@color/text_secondary"
+        android:textSize="14sp" />
+
+</LinearLayout>
