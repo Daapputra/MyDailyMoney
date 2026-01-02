@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navLaporan: LinearLayout
     private lateinit var navHome: LinearLayout
     private lateinit var barChartSummary: BarChart
-    
+
     // ===== TABUNGAN =====
     private lateinit var rvTabungan: RecyclerView
     private lateinit var btnTambahTabungan: Button
@@ -66,7 +66,7 @@ class MainActivity : AppCompatActivity() {
     private var totalMasuk = 0L
     private var totalKeluar = 0L
     private var lastSaldo = 0L
-    
+
     private var isSaldoHidden = false
 
     private val PREF_NAME = "mydailymoney_pref"
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         navLaporan = findViewById(R.id.navLaporan)
         navHome = findViewById(R.id.navHome)
         barChartSummary = findViewById(R.id.barChartSummary)
-        
+
         rvTabungan = findViewById(R.id.rvTabungan)
         btnTambahTabungan = findViewById(R.id.btnTambahTabungan)
     }
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         rvTabungan.layoutManager = LinearLayoutManager(this)
         rvTabungan.adapter = tabunganAdapter
     }
-    
+
     private fun loadTabungan() {
         listTabungan.clear()
         val pref = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
@@ -131,11 +131,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             // Default example if none exists
             if (listTabungan.isEmpty()) {
-                 listTabungan.add(Tabungan(nama = "Liburan Akhir Tahun", target = 5000000, terkumpul = 1500000))
+                listTabungan.add(Tabungan(nama = "Liburan Akhir Tahun", target = 5000000, terkumpul = 1500000))
             }
         }
     }
-    
+
     private fun saveTabungan() {
         val pref = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         pref.edit().putString("listTabungan", Gson().toJson(listTabungan)).apply()
@@ -165,7 +165,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btnReset.setOnClickListener { showResetDialog() }
-        
+
         btnTambahTabungan.setOnClickListener {
             showAddTabunganDialog()
         }
@@ -178,26 +178,26 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this, RiwayatActivity::class.java))
         }
     }
-    
+
     private fun toggleSaldoVisibility() {
         isSaldoHidden = !isSaldoHidden
-        
+
         // Update icon based on state (assuming we have visibility_off too, using same for now or tint)
         btnToggleSaldo.alpha = if (isSaldoHidden) 0.5f else 1.0f
-        
+
         val saldo = totalMasuk - totalKeluar
         val displaySaldo = if (isSaldoHidden) "Rp *****" else formatRupiah(saldo)
-        
+
         // Update current view text directly or animate if you want
         // For simplicity, just update the text of current visible view or force re-animation
         val currentView = vfSaldo.currentView as TextView
         currentView.text = displaySaldo
-        
+
         // Also update tvSaldo1/2 so next animation is correct
         tvSaldo1.text = displaySaldo
         tvSaldo2.text = displaySaldo
     }
-    
+
     // ===== FORMATTER HELPER =====
     private fun setupNominalFormatter(editText: TextInputEditText) {
         editText.addTextChangedListener(object : TextWatcher {
@@ -223,7 +223,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-    
+
     // ===== CRUD TABUNGAN =====
     private fun showAddTabunganDialog() {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_tabungan, null)
@@ -241,12 +241,12 @@ class MainActivity : AppCompatActivity() {
 
         tvTitle.text = "Tambah Target Tabungan"
         btnHapus.visibility = View.GONE
-        
+
         val dialog = AlertDialog.Builder(this)
             .setView(dialogView)
             .setCancelable(true)
             .create()
-            
+
         // Make background transparent for rounded corners effect if needed, but handled by card
         dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
 
@@ -258,7 +258,7 @@ class MainActivity : AppCompatActivity() {
             if (nama.isNotEmpty() && targetStr.isNotEmpty()) {
                 val target = targetStr.toLongOrNull() ?: 0
                 val terkumpul = terkumpulStr.toLongOrNull() ?: 0
-                
+
                 val newTabungan = Tabungan(nama = nama, target = target, terkumpul = terkumpul)
                 listTabungan.add(newTabungan)
                 saveTabungan()
@@ -267,14 +267,14 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Nama dan Target harus diisi", Toast.LENGTH_SHORT).show()
             }
         }
-        
+
         btnBatal.setOnClickListener {
             dialog.dismiss()
         }
-        
+
         dialog.show()
     }
-    
+
     private fun showEditTabunganDialog(tabungan: Tabungan) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_tabungan, null)
         val etNama = dialogView.findViewById<TextInputEditText>(R.id.etNamaTabungan)
@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity() {
         etNama.setText(tabungan.nama)
         etTarget.setText(NumberFormat.getNumberInstance(Locale("in", "ID")).format(tabungan.target))
         etTerkumpul.setText(NumberFormat.getNumberInstance(Locale("in", "ID")).format(tabungan.terkumpul))
-        
+
         btnHapus.visibility = View.VISIBLE
         btnSimpan.text = "Update"
 
@@ -313,24 +313,24 @@ class MainActivity : AppCompatActivity() {
                 tabungan.nama = nama
                 tabungan.target = targetStr.toLongOrNull() ?: 0
                 tabungan.terkumpul = terkumpulStr.toLongOrNull() ?: 0
-                
+
                 saveTabungan()
                 dialog.dismiss()
             }
         }
-        
+
         btnHapus.setOnClickListener {
             dialog.dismiss()
             confirmDeleteTabungan(tabungan)
         }
-        
+
         btnBatal.setOnClickListener {
             dialog.dismiss()
         }
-        
+
         dialog.show()
     }
-    
+
     private fun confirmDeleteTabungan(tabungan: Tabungan) {
         AlertDialog.Builder(this)
             .setTitle("Hapus Tabungan")
@@ -348,13 +348,13 @@ class MainActivity : AppCompatActivity() {
         barChartSummary.setDrawGridBackground(false)
         barChartSummary.setDrawBarShadow(false)
         barChartSummary.legend.isEnabled = false // Custom legend used in XML
-        
+
         // Interaction
         barChartSummary.setTouchEnabled(true)
         barChartSummary.isDragEnabled = true
         barChartSummary.setScaleEnabled(false)
         barChartSummary.setPinchZoom(false)
-        
+
         // Axis styling
         val xAxis = barChartSummary.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
@@ -363,7 +363,7 @@ class MainActivity : AppCompatActivity() {
         xAxis.textSize = 12f
         xAxis.granularity = 1f
         xAxis.setCenterAxisLabels(true) // Center labels for groups
-        
+
         val leftAxis = barChartSummary.axisLeft
         leftAxis.setDrawGridLines(true)
         leftAxis.gridColor = Color.parseColor("#E0E0E0")
@@ -372,9 +372,9 @@ class MainActivity : AppCompatActivity() {
         leftAxis.textSize = 10f
         leftAxis.setDrawAxisLine(false)
         leftAxis.axisMinimum = 0f // Start from 0
-        
+
         barChartSummary.axisRight.isEnabled = false
-        
+
         barChartSummary.animateY(1000)
     }
 
@@ -387,21 +387,21 @@ class MainActivity : AppCompatActivity() {
 
         // Group data by Date (dd/MM) or Month depending on range. For now, daily/recent.
         // Let's group by DAY for the last 5-7 days or transactions
-        
+
         // Simplified approach: Group by date string "dd MMM"
         val incomeMap = mutableMapOf<String, Float>()
         val expenseMap = mutableMapOf<String, Float>()
         val allDates = sortedSetOf<String>()
         val dateFormat = SimpleDateFormat("dd MMM", Locale.getDefault())
-        
+
         // Sort transactions by time
         val sortedList = listTransaksi.sortedBy { it.timestamp }
-        
+
         // Process data
         for (t in sortedList) {
             val dateKey = dateFormat.format(Date(t.timestamp))
             allDates.add(dateKey)
-            
+
             val nominal = t.nominal.toFloat()
             if (t.jenis.equals("Pemasukan", ignoreCase = true)) {
                 incomeMap[dateKey] = (incomeMap[dateKey] ?: 0f) + nominal
@@ -409,13 +409,13 @@ class MainActivity : AppCompatActivity() {
                 expenseMap[dateKey] = (expenseMap[dateKey] ?: 0f) + nominal
             }
         }
-        
+
         // Take last 5 days/entries to fit chart nicely
         val recentDates = allDates.toList().takeLast(5)
-        
+
         val entriesIncome = ArrayList<BarEntry>()
         val entriesExpense = ArrayList<BarEntry>()
-        
+
         recentDates.forEachIndexed { index, date ->
             entriesIncome.add(BarEntry(index.toFloat(), incomeMap[date] ?: 0f))
             entriesExpense.add(BarEntry(index.toFloat(), expenseMap[date] ?: 0f))
@@ -440,15 +440,15 @@ class MainActivity : AppCompatActivity() {
 
         val data = BarData(set1, set2)
         data.barWidth = barWidth
-        
+
         barChartSummary.data = data
-        
+
         // Set X-Axis labels
         barChartSummary.xAxis.valueFormatter = IndexAxisValueFormatter(recentDates)
         // Restrict view to show groups correctly
         barChartSummary.xAxis.axisMinimum = 0f
         barChartSummary.xAxis.axisMaximum = recentDates.size.toFloat()
-        
+
         barChartSummary.groupBars(0f, groupSpace, barSpace)
         barChartSummary.invalidate()
     }
@@ -480,12 +480,12 @@ class MainActivity : AppCompatActivity() {
 
         val nextView = vfSaldo.currentView as? TextView
         val currentView = if (vfSaldo.currentView == tvSaldo1) tvSaldo2 else tvSaldo1
-        
+
         val displaySaldo = if (isSaldoHidden) "Rp *****" else formatRupiah(newSaldo)
-        
+
         // Set saldo baru ke view berikutnya
         currentView.text = displaySaldo
-        
+
         // Tentukan animasi berdasarkan perubahan saldo
         if (newSaldo > oldSaldo) {
             vfSaldo.setInAnimation(this, R.anim.slide_in_up)
@@ -494,7 +494,7 @@ class MainActivity : AppCompatActivity() {
             vfSaldo.setInAnimation(this, R.anim.slide_in_down) // Anda perlu membuat slide_in_down
             vfSaldo.setOutAnimation(this, R.anim.slide_out_down) // Anda perlu membuat slide_out_down
         }
-        
+
         vfSaldo.showNext()
         lastSaldo = newSaldo
     }
@@ -524,7 +524,7 @@ class MainActivity : AppCompatActivity() {
         getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().clear().apply()
         // Keep first run true so onboarding doesn't show again
         getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE).edit().putBoolean("isFirstRun", true).apply()
-        
+
         totalMasuk = 0
         totalKeluar = 0
         listTransaksi.clear()

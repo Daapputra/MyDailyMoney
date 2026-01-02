@@ -12,7 +12,7 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginBottom="24dp"
-        android:src="@drawable/ic_fab_chicken" />
+        android:src="@drawable/icon_jago_aplikasi" />
 
     <TextView
         android:id="@+id/tvTitle"

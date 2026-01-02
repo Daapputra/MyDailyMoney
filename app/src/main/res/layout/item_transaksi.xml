@@ -1,91 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardUseCompatPadding="true"
-    app:strokeWidth="0dp"
-    app:cardBackgroundColor="@color/bg_card_white">
+    android:orientation="vertical"
+    android:background="@color/bg_card_white">
 
     <LinearLayout
+        android:id="@+id/rowContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:padding="16dp">
+        android:paddingVertical="14dp"
+        android:paddingHorizontal="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackground">
 
-        <!-- Icon with Background -->
-        <FrameLayout
-            android:id="@+id/layoutIcon"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_icon_category_item">
-            
+        <!-- Column 1: Transaction Info (Icon + Name + Date) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.6"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
             <ImageView
-                android:id="@+id/imgKategori"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_cat_makanan"
-                app:tint="@color/green_primary"/>
-        </FrameLayout>
+                android:id="@+id/imgIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                tools:src="@drawable/ic_cat_makanan"
+                app:tint="@color/green_primary"
+                android:padding="8dp"
+                android:background="@drawable/bg_circle_green"
+                android:backgroundTint="#E8F5E9"
+                android:layout_marginEnd="16dp"/>
 
-        <!-- Detail Transaksi -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:text="SATE REMBIGE"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/text_primary"
+                    android:fontFamily="sans-serif-black"
+                    android:maxLines="1"
+                    android:ellipsize="end"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="4dp">
+
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="#757575"
+                        android:layout_marginEnd="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        tools:text="05 Des 2015"
+                        android:textSize="12sp"
+                        android:textColor="#757575"
+                        android:fontFamily="sans-serif-medium"/>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Column 2: Category -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:layout_marginStart="16dp">
-            
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp">
+
+            <!-- Removed redundant small icon to match user request of "synchronizing icons" 
+                 which implies the main icon should be the category icon -->
+
             <TextView
-                android:id="@+id/tvKategori"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvCategory"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Makanan"
-                android:textSize="16sp"
+                tools:text="Makanan"
+                android:textSize="14sp"
+                android:textColor="#424242"
                 android:fontFamily="sans-serif-medium"
-                android:textColor="@color/text_primary"/>
-                
-            <TextView
-                android:id="@+id/tvCatatan"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Catatan singkat di sini"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"
-                android:visibility="gone"/>
+                android:maxLines="1"
+                android:ellipsize="end"/>
         </LinearLayout>
 
-        <!-- Nominal & Tanggal -->
-        <LinearLayout
+        <!-- Column 3: Amount -->
+        <TextView
+            android:id="@+id/tvNominal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="end">
-            
-            <TextView
-                android:id="@+id/tvNominal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-Rp 50.000"
-                android:textSize="16sp"
-                android:fontFamily="sans-serif-bold"
-                android:textColor="@color/red_primary"/>
-            
-            <TextView
-                android:id="@+id/tvTanggal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="10 Jan 2024"
-                android:textSize="12sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
+            tools:text="Rp 1.175.000"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"
+            android:textColor="@color/text_primary"
+            android:gravity="end"/>
 
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+    
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE"
+        android:layout_marginHorizontal="16dp"/>
+
+</LinearLayout>

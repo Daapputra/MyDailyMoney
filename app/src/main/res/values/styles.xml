@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Custom Date Picker Theme -->
+    <style name="CustomDatePickerDialog" parent="Theme.MaterialComponents.Light.Dialog">
+        <item name="colorAccent">@color/green_primary</item> <!-- Header & Selection Color -->
+        <item name="android:windowBackground">@drawable/bg_card_white</item> <!-- Dialog Background -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="materialCalendarStyle">@style/CustomMaterialCalendar</item>
+    </style>
+
+    <style name="CustomMaterialCalendar" parent="Widget.MaterialComponents.MaterialCalendar">
+        <item name="android:background">@color/bg_card_white</item>
+    </style>
+</resources>
