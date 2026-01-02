@@ -8,7 +8,7 @@ android {
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.mydailymoney"
+        applicationId = "com.daily.mydailymoney"
         minSdk = 21
         targetSdk = 36
         versionCode = 1
