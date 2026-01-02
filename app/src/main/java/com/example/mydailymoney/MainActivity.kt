@@ -19,6 +19,7 @@ import android.widget.ViewFlipper
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.charts.BarChart
@@ -82,6 +83,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        // Hapus pemaksaan mode malam di sini karena sudah diatur di themes.xml
+        // AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        
         setContentView(R.layout.activity_main)
 
         initView()
@@ -111,6 +116,10 @@ class MainActivity : AppCompatActivity() {
 
         rvTabungan = findViewById(R.id.rvTabungan)
         btnTambahTabungan = findViewById(R.id.btnTambahTabungan)
+        
+        // Remove animation to prevent crash
+        vfSaldo.inAnimation = null
+        vfSaldo.outAnimation = null
     }
 
     private fun setupTabunganRecycler() {
@@ -477,25 +486,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun animateSaldo(newSaldo: Long) {
         val oldSaldo = lastSaldo
-
-        val nextView = vfSaldo.currentView as? TextView
-        val currentView = if (vfSaldo.currentView == tvSaldo1) tvSaldo2 else tvSaldo1
-
         val displaySaldo = if (isSaldoHidden) "Rp *****" else formatRupiah(newSaldo)
 
-        // Set saldo baru ke view berikutnya
-        currentView.text = displaySaldo
-
-        // Tentukan animasi berdasarkan perubahan saldo
-        if (newSaldo > oldSaldo) {
-            vfSaldo.setInAnimation(this, R.anim.slide_in_up)
-            vfSaldo.setOutAnimation(this, R.anim.slide_out_up)
-        } else {
-            vfSaldo.setInAnimation(this, R.anim.slide_in_down) // Anda perlu membuat slide_in_down
-            vfSaldo.setOutAnimation(this, R.anim.slide_out_down) // Anda perlu membuat slide_out_down
-        }
-
-        vfSaldo.showNext()
+        // Update saldo tanpa animasi flip untuk sementara untuk menghindari crash
+        tvSaldo1.text = displaySaldo
+        tvSaldo2.text = displaySaldo
+        
         lastSaldo = newSaldo
     }
 

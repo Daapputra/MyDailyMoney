@@ -206,18 +206,13 @@ class RiwayatActivity : AppCompatActivity() {
     private fun calculateTotal() {
         var total = 0L
         for (item in listFiltered) {
-            // Asumsi yang dihitung adalah "Total Expenses" (Pengeluaran) sesuai gambar
-            // Namun jika ingin Total Saldo, kurangi Pengeluaran, tambah Pemasukan
-            // Sesuai gambar "Total Expenses", mari kita hitung total pengeluaran saja
-            if (item.jenis == "Pengeluaran") {
+            if (item.jenis == "Pemasukan") {
                 total += item.nominal
+            } else {
+                total -= item.nominal
             }
         }
 
-        // Atau jika ingin menghitung net cash flow:
-        // if (item.jenis == "Pemasukan") total += item.nominal else total -= item.nominal
-
-        // Untuk saat ini saya ikut label di gambar "Total Expenses"
         val formatter = NumberFormat.getCurrencyInstance(Locale("in", "ID"))
         tvTotalExpenses.text = formatter.format(total).replace(",00", "")
     }

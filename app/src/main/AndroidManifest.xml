@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyDailyMoney"
         tools:targetApi="31">
-        
-        <!-- Onboarding Activity is now the LAUNCHER again -->
+
+        <!-- SPLASH SCREEN (Launcher / Halaman Pertama) -->
         <activity
-            android:name=".OnboardingActivity"
+            android:name=".SplashScreenActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
@@ -24,6 +24,7 @@
             </intent-filter>
         </activity>
 
+        <!-- Main Activity (Halaman Utama) -->
         <activity
             android:name=".MainActivity"
             android:exported="false" />

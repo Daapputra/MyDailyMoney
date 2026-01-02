@@ -50,7 +50,6 @@
             android:background="@drawable/bg_card_white"
             android:elevation="4dp"
             android:padding="24dp"
-            android:layout_marginHorizontal="24dp"
             android:layout_marginBottom="24dp">
 
             <!-- Label Nominal -->
