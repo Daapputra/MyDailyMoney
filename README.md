@@ -11,7 +11,6 @@
   <a href="https://developer.android.com/"><img src="https://img.shields.io/badge/Platform-Android-3DDC84?style=for-the-badge&logo=android&logoColor=white" alt="Android Badge" /></a>
   <img src="https://img.shields.io/badge/Min%20SDK-21-orange?style=for-the-badge" alt="Min SDK" />
   <img src="https://img.shields.io/badge/Target%20SDK-36-blue?style=for-the-badge" alt="Target SDK" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License" />
 </p>
 
 ---
